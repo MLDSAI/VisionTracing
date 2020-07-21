@@ -1,5 +1,12 @@
+setup:
+  addons:
+    - plan: heroku-redis
+      as: REDIS
+  config:
+    S3_BUCKET: example-bucket
 build:
   docker:
     web: Dockerfile
-run:
-  worker: python worker.py
+    worker: worker/Dockerfile
+  config:
+    FLASK_ENV: development
