@@ -1,7 +1,7 @@
 from flask import Flask
 from rq import Queue
 
-from worker import conn
+from worker.worker import conn
 from utils import count_words_at_url
 
 
