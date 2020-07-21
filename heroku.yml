@@ -4,6 +4,9 @@ setup:
       as: REDIS
   config:
     S3_BUCKET: example-bucket
+		LOG_LEVEL: DEBUG
+		DEBUG: 1
+		FLASK_ENV: development
 build:
   docker:
     web: Dockerfile
