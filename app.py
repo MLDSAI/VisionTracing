@@ -5,7 +5,6 @@ from flask import Flask
 from rq import Queue
 
 from worker.worker import conn
-from worker.utils import count_words_at_url
 
 
 app = Flask(__name__)
@@ -27,7 +26,7 @@ def log(*args, **kwargs):
 def index():
   log('index()')
   q = Queue(connection=conn)
-  result = q.enqueue(count_words_at_url, 'http://heroku.com')
+  result = q.enqueue('utils.count_words_at_url', 'http://heroku.com')
   log('q:', q)
   log('result:', result)
   return 'Enqueued'
