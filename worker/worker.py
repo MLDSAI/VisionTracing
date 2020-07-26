@@ -2,11 +2,12 @@ import os
 import sys
 
 import redis
+from loguru import logger
 from rq import Worker, Queue, Connection
 
 
 def log(*args, **kwargs):
-  print('worker/worker.py:', *args, **kwargs)
+  logger.debug('worker/worker.py:', *args, **kwargs)
   #sys.stdout.flush()
 
 

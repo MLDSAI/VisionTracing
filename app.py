@@ -2,6 +2,7 @@ import os
 import sys
 
 from flask import Flask
+from loguru import logger
 from rq import Queue
 
 from worker.worker import conn
@@ -18,7 +19,7 @@ app.config['TIMEZONE'] = os.getenv(
 
 
 def log(*args, **kwargs):
-  print('app.py:', *args, **kwargs)
+  logger.debug('app.py:', *args, **kwargs)
   #sys.stdout.flush()
 
 
