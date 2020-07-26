@@ -9,13 +9,7 @@ from worker.worker import conn
 
 
 app = Flask(__name__)
-# TODO: read from environment
-# XXX DEBUG -> INFO
 app.config['LOG_LEVEL'] = os.getenv('LOG_LEVEL', 'DEBUG')
-# TODO: get rid of this
-app.config['TIMEZONE'] = os.getenv(
-  'TIMEZONE', 'America/Toronto'
-)
 
 
 @app.route('/')
