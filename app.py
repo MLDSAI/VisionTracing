@@ -19,7 +19,7 @@ app.config['TIMEZONE'] = os.getenv(
 
 def log(*args, **kwargs):
   print('app.py:', *args, **kwargs)
-  sys.stdout.flush()
+  #sys.stdout.flush()
 
 
 @app.route('/')

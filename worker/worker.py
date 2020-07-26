@@ -7,12 +7,11 @@ from rq import Worker, Queue, Connection
 
 def log(*args, **kwargs):
   print('worker/worker.py:', *args, **kwargs)
-  sys.stdout.flush()
+  #sys.stdout.flush()
 
 
 listen = ['high', 'default', 'low']
 
-#redis_url = os.getenv('REDISTOGO_URL', 'redis://localhost:6379')
 redis_url = os.getenv(
   'REDISTOGO_URL',
   (
