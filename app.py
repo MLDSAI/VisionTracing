@@ -1,5 +1,4 @@
 import os
-import sys
 
 from flask import Flask
 from loguru import logger
@@ -16,7 +15,7 @@ app.config['LOG_LEVEL'] = os.getenv('LOG_LEVEL', 'DEBUG')
 def index():
   logger.info('index()')
   q = Queue(connection=conn)
-  result = q.enqueue('utils.count_words_at_url', 'http://heroku.com')
+  result = q.enqueue('utils.count_words_at_url', 'http://news.ycombinator.com')
   logger.info(f'q: {q}')
   logger.info(f'result: {result}')
   return 'Enqueued'

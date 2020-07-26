@@ -1,5 +1,4 @@
 import os
-import sys
 
 import redis
 from loguru import logger
