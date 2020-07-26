@@ -6,11 +6,6 @@ from loguru import logger
 from rq import Worker, Queue, Connection
 
 
-def log(*args, **kwargs):
-  logger.debug('worker/worker.py:', *args, **kwargs)
-  #sys.stdout.flush()
-
-
 listen = ['high', 'default', 'low']
 
 redis_url = os.getenv(
@@ -28,5 +23,5 @@ if __name__ == '__main__':
   log('__main__')
   with Connection(conn):
     worker = Worker(map(Queue, listen))
-    log('worker:', worker)
+    logger.debug(f'worker: {worker}')
     worker.work()

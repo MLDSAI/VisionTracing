@@ -1,10 +1,10 @@
 import requests
 
-from worker import log
+from loguru import logger
 
 
 def count_words_at_url(url):
   resp = requests.get(url)
   rval = len(resp.text.split())
-  log('rval:', rval)
+  logger.debug(f'rval: {rval}')
   return rval

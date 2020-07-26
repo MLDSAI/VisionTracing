@@ -18,16 +18,11 @@ app.config['TIMEZONE'] = os.getenv(
 )
 
 
-def log(*args, **kwargs):
-  logger.debug('app.py:', *args, **kwargs)
-  #sys.stdout.flush()
-
-
 @app.route('/')
 def index():
   log('index()')
   q = Queue(connection=conn)
   result = q.enqueue('utils.count_words_at_url', 'http://heroku.com')
-  log('q:', q)
-  log('result:', result)
+  logger.debug(f'q: {q}')
+  logger.debug(f'result: {result}')
   return 'Enqueued'
