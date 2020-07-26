@@ -20,8 +20,8 @@ conn = redis.from_url(redis_url)
 
 
 if __name__ == '__main__':
-  logger.debug('__main__')
+  logger.info('__main__')
   with Connection(conn):
     worker = Worker(map(Queue, listen))
-    logger.debug(f'worker: {worker}')
+    logger.info(f'worker: {worker}')
     worker.work()
