@@ -20,7 +20,7 @@ app.config['TIMEZONE'] = os.getenv(
 
 @app.route('/')
 def index():
-  log('index()')
+  logger.debug('index()')
   q = Queue(connection=conn)
   result = q.enqueue('utils.count_words_at_url', 'http://heroku.com')
   logger.debug(f'q: {q}')
