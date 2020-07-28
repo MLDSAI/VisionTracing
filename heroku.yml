@@ -9,7 +9,7 @@ setup:
     FLASK_ENV: development
 build:
   docker:
-    web: Dockerfile
-    worker: worker/Dockerfile
+    web: web.Dockerfile
+    worker: worker.Dockerfile
   config:
     FLASK_ENV: development
