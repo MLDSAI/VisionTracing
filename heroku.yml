@@ -1,7 +1,10 @@
+# https://devcenter.heroku.com/articles/build-docker-images-heroku-yml
 setup:
   addons:
     - plan: heroku-redis
       as: REDIS
+    - plan: heroku-postgresql
+      as: POSTGRES
   config:
     S3_BUCKET: example-bucket
     LOG_LEVEL: DEBUG
@@ -13,3 +16,5 @@ build:
     worker: worker.Dockerfile
   config:
     FLASK_ENV: development
+#run:
+# Dockerfile CMD is used instead
