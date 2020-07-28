@@ -9,7 +9,7 @@ ENV PYTHONUNBUFFERED 1
 WORKDIR /app
 COPY . /app
 RUN pip3 install -r requirements.txt && pip install gunicorn
-CMD bash /app/run.sh
+CMD bash /app/web.sh
 
 #FROM python:3.7-slim-buster
 #ENV PYTHONDONTWRITEBYTECODE 1
