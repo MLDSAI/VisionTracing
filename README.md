@@ -70,8 +70,7 @@ heroku logs --tail
 
 ## Usage
 
-The following applies whether deployed on heroku (e.g. [http://visiontracing-<suffix>.herokuapp.com](http://visiontracing-<suffix>.herokuapp.com)
-at http://visiontracing-\<suffix\>.herokuapp.com) or docker-compose (e.g. at http://localhost:5000):
+The following applies whether deployed on heroku (e.g. at http://visiontracing-[suffix].herokuapp.com) or docker-compose (e.g. at http://localhost:5000):
 
 - Observe queues, workers, and jobs in the RQ-dashboard at the '/rq' endpoint.
 
