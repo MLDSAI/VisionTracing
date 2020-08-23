@@ -44,7 +44,6 @@ def _get_subjects_from_tracks(tracks_by_fpath_video):
     pass
 
 
-
 def get_subjects(dirpath_videos):
     '''
     Get subjects from videos.
