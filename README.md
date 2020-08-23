@@ -42,7 +42,7 @@ Provision Redis:
 
 ```
 $ heroku addons:create heroku-redis:hobby-dev
-``
+```
 
 Provision Postgres:
 
