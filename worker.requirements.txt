@@ -1,8 +1,10 @@
+cython-bbox
 loguru==0.5.1
 flask==1.1.2
 requests==2.24.0
 rq==1.4.3
 rq_dashboard==0.6.1
+scipy
 torch==1.6
 torchvision==0.7
 tqdm

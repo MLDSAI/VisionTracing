@@ -9,14 +9,16 @@ from detectron2.config import get_cfg
 from loguru import logger
 from tqdm import tqdm
 
+import tracking
+
 
 def get_tracking_video(fpath_video):
     logger.info(f'get_tracking_video fpath_video: {fpath_video}')
     image_gen  = _get_images_from_video(fpath_video)
     images = [image for image in image_gen]
     predictions = _get_predictions_from_images(images)
-    tracks = _get_tracks_from_predictions(predictions)
-    fpath_tracking_video = _get_tracking_video(images, tracks)
+    tracks = tracking.get_tracks(predictions)
+    fpath_tracking_video = _get_video_from_tracks(tracks, images)
     return len(images), fpath_tracking_video
 
 
@@ -102,11 +104,8 @@ def _setup_cfg(config, opts, conf_thresh):
     return cfg
 
 
-def _get_tracks_from_predictions(predictions):
-    # TODO
-    pass
+def _get_video_from_tracks(tracks, images):
+    ''' Save a video showing tracks to disk and return the path '''
 
-
-def _get_tracking_video(images, tracks):
     # TODO
     pass

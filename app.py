@@ -35,9 +35,11 @@ def upload():
     with open(fname_video, 'wb') as f:
       f.write(video_stream)
 
+    one_week = 60 * 60 * 24 * 7
     job = q.enqueue(
-        'visiontracing.tracing.get_tracking_video',
-        fname_video
+        'vision.get_tracking_video',
+        args=(fname_video,),
+        timeout=one_week
     )
     job.filename = fname_video
     jobs.append(job)
