@@ -40,8 +40,8 @@ def _get_images_from_videos(video_stream):
             else:
                 break
     
-    video = _frame_from_video(cv2.VideoCapture(video_stream))
-    return video
+    # video = _frame_from_video(cv2.VideoCapture(video_stream))
+    return video_stream
 
 
 def _get_tracks_from_images(video_file):
