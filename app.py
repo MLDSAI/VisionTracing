@@ -10,6 +10,8 @@ import rq_dashboard
 
 from worker import conn, redis_url
 
+q = Queue(connection=conn)
+
 
 app = Flask(__name__)
 app.config['LOG_LEVEL'] = os.getenv('LOG_LEVEL', 'DEBUG')
@@ -19,22 +21,27 @@ app.register_blueprint(
     rq_dashboard.blueprint, url_prefix='/rq/'
 )
 
+jobs = []
+
 
 @app.route('/upload', methods=['POST'])
 def upload():
 
     logger.info(f'upload() request.files: {request.files}')
 
-    video_stream = request.files['file'].read()
-    fpath_video = 'video.mp4'
-    with open(fpath_video, 'wb') as f:
+    video_file = request.files.get('file')
+    fname_video = video_file.filename
+    video_stream = video_file.read()
+    with open(fname_video, 'wb') as f:
       f.write(video_stream)
 
-    q = Queue(connection=conn)
-    result = q.enqueue(
-        'utils.convert_video_to_images', fpath_video
+    job = q.enqueue(
+        'utils.convert_video_to_images', fname_video
     )
-    
+    job.filename = fname_video
+    jobs.append(job)
+    logger.info(f'job: {job}')
+
     return {
         'status': 200,
         'mimetype': 'application/json'
@@ -44,9 +51,9 @@ def upload():
 @app.route('/test')
 def test():
     logger.info('test()')
-    q = Queue(connection=conn)
     result = q.enqueue(
-        'utils.count_words_at_url', 'http://news.ycombinator.com'
+        'utils.count_words_at_url',
+        'http://news.ycombinator.com'
     )
     logger.info(f'q: {q}')
     logger.info(f'result: {result}')
@@ -55,4 +62,8 @@ def test():
 
 @app.route('/')
 def index():
-    return render_template('index.html')
+    logger.info(f'jobs: {jobs}')
+    return render_template(
+        'index.html',
+        jobs=jobs
+    )

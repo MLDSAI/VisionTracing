@@ -9,15 +9,15 @@
 
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/fomantic-ui@2.8.4/dist/semantic.min.css" />
   <link
-    rel="stylesheet" 
+    rel="stylesheet"
     href="https://cdnjs.cloudflare.com/ajax/libs/dropzone/5.4.0/min/dropzone.min.css"
   />
   <link
-    rel="stylesheet" 
+    rel="stylesheet"
     href="https://cdnjs.cloudflare.com/ajax/libs/dropzone/5.4.0/min/basic.min.css"
     />
   <script
-    type="application/javascript" 
+    type="application/javascript"
     src="https://cdnjs.cloudflare.com/ajax/libs/dropzone/5.4.0/min/dropzone.min.js"
   >
   </script>
@@ -50,9 +50,9 @@
     padding: 5em 0em;
   }
 
-	#dropzone {
-		margin-bottom: 20px;
-	}
+  #dropzone {
+    margin-bottom: 20px;
+  }
 
 </style>
 
@@ -61,45 +61,67 @@
   <div class="ui fixed inverted menu">
     <div class="ui container">
       <a href="#" class="header item">
-				Contact Tracing AI
+        Contact Tracing AI
       </a>
     </div>
   </div>
 
   <div class="ui main text container">
     <h1 class="ui header">
-			Tracking Demo
-		</h1>
+      Tracking Demo
+    </h1>
 
-		<p>Drag and drop or click to upload a video file for analysis.</p>
+    <p>Drag and drop or click to upload a video file for analysis.</p>
 
-		<div id="dropzone">
-			<form class="dropzone needsclick" id="file-upload" action="/upload">
-				<div class="dz-message needsclick">    
-					Drop files here or click to upload.
-				</div>
-			</form>
-		</div>
+    <div id="dropzone">
+      <form class="dropzone needsclick" id="file-upload" action="/upload">
+        <div class="dz-message needsclick">
+          Drop files here or click to upload.
+        </div>
+      </form>
+    </div>
+
+    {% if jobs %}
+      <h3>Videos</h3>
+      <ul>
+        {% for job in jobs %}
+          <li>
+            <ul>
+              <li>
+                filename: {{ job.filename }}
+              </li>
+              <li>
+                is_finished: {{ job.is_finished }}
+              </li>
+              <li>
+                result: {{ job.result }}
+              </li>
+            </ul>
+          </li>
+        {% endfor %}
+      </ul>
+    {% endif %}
+
 
   </div>
 
   <div class="ui inverted vertical footer segment">
-		<div class="ui stackable inverted center aligned grid">
-			<div class="twelve wide column">
-				<p>
-					<a href="//contacttracingai.com">
-						www.ContactTracingAI.com
-					</a>
-				</p>
+    <div class="ui stackable inverted center aligned grid">
+      <div class="twelve wide column">
+        <p>
+          <a href="//contacttracingai.com">
+            www.ContactTracingAI.com
+          </a>
+        </p>
 
-				<p>
-					Made in Toronto by
-					<a href="http://mldsai.com">
-						MLDSAI
-					</a>
-				</p>
-			</div>
-		</div>
+        <p>
+          Made in Toronto by
+          <a href="http://mldsai.com">
+            MLDSAI
+          </a>
+        </p>
+      </div>
+    </div>
   </div>
 
   <script>
