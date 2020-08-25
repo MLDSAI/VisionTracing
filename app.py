@@ -35,11 +35,9 @@ def upload():
     with open(fname_video, 'wb') as f:
       f.write(video_stream)
 
-    one_day = 60 * 60 * 24
     job = q.enqueue(
-        'utils.convert_video_to_images',
-        fname_video,
-        ttl=one_day
+        'visiontracing.tracing.get_tracking_video',
+        fname_video
     )
     job.filename = fname_video
     jobs.append(job)
@@ -54,9 +52,11 @@ def upload():
 @app.route('/test')
 def test():
     logger.info('test()')
+    one_day = 60 * 60 * 24
     result = q.enqueue(
         'utils.count_words_at_url',
-        'http://news.ycombinator.com'
+        'http://news.ycombinator.com',
+        job_timeout=one_day
     )
     logger.info(f'q: {q}')
     logger.info(f'result: {result}')
