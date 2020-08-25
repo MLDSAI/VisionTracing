@@ -8,5 +8,5 @@ ENV PYTHONUNBUFFERED 1
 
 WORKDIR /app
 COPY . /app
-RUN pip3 install -r requirements.txt && pip install gunicorn
+RUN pip3 install -r web.requirements.txt && pip install gunicorn
 CMD bash /app/web.sh
