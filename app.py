@@ -23,7 +23,9 @@ app.register_blueprint(
 @app.route('/upload', methods=['POST'])
 def upload():
 
-    video_stream = request.files['video'].read()
+    logger.info(f'upload() request.files: {request.files}')
+
+    video_stream = request.files['file'].read()
     fpath_video = 'video.mp4'
     with open(fpath_video, 'wb') as f:
       f.write(video_stream)
@@ -33,11 +35,10 @@ def upload():
         'utils.convert_video_to_images', fpath_video
     )
     
-    response = jsonify({'success': True})
-    response.headers.add('Access-Control-Allow-Origin',  '*')
-    response.headers.add('Access-Control-Allow-Headers', '*')
-    response.headers.add('Access-Control-Allow-Methods', '*')
-    return response
+    return {
+        'status': 200,
+        'mimetype': 'application/json'
+    }
 
   
 @app.route('/test')

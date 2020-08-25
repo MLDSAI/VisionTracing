@@ -6,6 +6,5 @@ ENV PYTHONUNBUFFERED 1
 
 WORKDIR /app
 COPY . /app
-RUN pip3 install -r requirements.txt
-RUN pip3 install -e git://github.com/facebookresearch/detectron2.git#egg=detectron2
-CMD jjanzic/docker-python3-opencv python worker.py
+RUN pip install -r requirements.txt && pip install 'git+https://github.com/facebookresearch/detectron2.git'
+CMD python worker.py

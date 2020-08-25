@@ -1,15 +1,16 @@
 import os
-import cv2
 
+import cv2
+import numpy as np
+import torch
 from detectron2 import model_zoo
 from detectron2.engine import DefaultPredictor
 from detectron2.config import get_cfg
 from detectron2.data import MetadataCatalog
 from detectron2.utils.video_visualizer import VideoVisualizer
 from detectron2.utils.visualizer import ColorMode
+from loguru import logger
 
-import torch
-import numpy as np
 
 def setup_cfg(config, opts, conf_thresh):
     # load config from file and arguments
@@ -27,21 +28,27 @@ def setup_cfg(config, opts, conf_thresh):
     return cfg
 
 
-def _get_images_from_videos(video_stream):
+def _get_images_from_video(fpath_video):
     '''
     Parameters:
-    - list[str] dirpath_videos: path to directory/bucket containing video files
+    - str fpath_video: path to video file
     '''
-    def _frame_from_video(video):
-        while video.isOpened():
-            success, frame = video.read()
-            if success:
-                yield frame
+
+    logger.info(
+        '_get_images_from_video() fpath_video: {fpath_video}'
+    )
+
+    def _frame_from_video(_video_capture):
+        while _video_capture.isOpened():
+            retval, image = _video_capture.read()
+            if retval:
+                yield image
             else:
                 break
     
-    # video = _frame_from_video(cv2.VideoCapture(video_stream))
-    return video_stream
+    video_capture = cv2.VideoCapture(fpath_video)
+    image_gen = _frame_from_video(video_capture)
+    return image_gen
 
 
 def _get_tracks_from_images(video_file):
