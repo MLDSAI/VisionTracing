@@ -918,3 +918,4 @@ def get_tracks(all_predictions):
 		    .01
     ]
     tracks = run_tracker(all_boxes, all_keypoints, 9, cost_types=cost_types, cost_weights=cost_weights)
+    return tracks
