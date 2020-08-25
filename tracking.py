@@ -901,7 +901,7 @@ def get_tracks(all_predictions):
     all_keypoints = []
     all_boxes = []
     for predictions in all_predictions:
-        instances = predictions['instances'].to(cpu_device)
+        instances = predictions['instances'].to('cpu')
         keypoints = np.asarray(instances.pred_keypoints)
         boxes = np.asarray(instances.pred_boxes.tensor)
         all_keypoints.append(keypoints)

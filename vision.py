@@ -115,7 +115,7 @@ def _get_video_from_tracks(tracks, images):
     kelly_colors = [[x[2], x[1], x[0]] for x in kelly_colors_rgb]
     fourcc = cv2.VideoWriter_fourcc("MP4V")
     output_size = images[0].shape
-    out = cv2.VideoWriter("tracks.mp4", fourcc, 25, output_size)
+    out = cv2.VideoWriter('tracks.mp4', fourcc, 25, output_size)
     
     for i in range(len(tracks)): # Number of tracks
         track_frame = np.zeros((output_size[0], output_size[1], 3), dtype=np.float32)
@@ -130,4 +130,4 @@ def _get_video_from_tracks(tracks, images):
         out.write(track_frame)
 
     out.release()
-    return "tracks.mp4"
+    return 'tracks.mp4'
