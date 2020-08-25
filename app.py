@@ -35,8 +35,11 @@ def upload():
     with open(fname_video, 'wb') as f:
       f.write(video_stream)
 
+    one_day = 60 * 60 * 24
     job = q.enqueue(
-        'utils.convert_video_to_images', fname_video
+        'utils.convert_video_to_images',
+        fname_video,
+        ttl=one_day
     )
     job.filename = fname_video
     jobs.append(job)
@@ -63,6 +66,7 @@ def test():
 @app.route('/')
 def index():
     logger.info(f'jobs: {jobs}')
+    # TODO: use websockets to update client without refresh
     return render_template(
         'index.html',
         jobs=jobs

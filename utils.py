@@ -16,6 +16,7 @@ def convert_video_to_images(fpath_video):
         f'convert_video_to_images() len(images): {len(images)}'
     )
     logger.info(f'convert_video_to_images() done')
+    return len(images)
 
 
 def count_words_at_url(url):
