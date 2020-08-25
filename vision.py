@@ -107,9 +107,9 @@ def _setup_cfg(config, opts, conf_thresh):
 def _get_video_from_tracks(tracks, images):
     ''' Save a video showing tracks to disk and return the path '''
     
-    fourcc = cv2.VideoWriter_fourcc(*"MP4V")
+    fourcc = cv2.VideoWriter_fourcc(*'XVID')
     output_size = images[0].shape
-    output_file = 'tracks.mp4'
+    output_file = 'tracks.avi'
     out = cv2.VideoWriter(output_file, fourcc, 25, output_size[:-1])
     
     for i in range(len(tracks)): # Number of tracks
