@@ -8,7 +8,7 @@ from detectron2.engine import DefaultPredictor
 from detectron2.config import get_cfg
 from loguru import logger
 from tqdm import tqdm
-
+from PIL import Image
 import tracking
 
 
@@ -107,10 +107,10 @@ def _setup_cfg(config, opts, conf_thresh):
 def _get_video_from_tracks(tracks, images):
     ''' Save a video showing tracks to disk and return the path '''
     
-    fourcc = cv2.VideoWriter_fourcc(*'XVID')
+    # fourcc = cv2.VideoWriter_fourcc(*'MP4V')
     output_size = images[0].shape
-    output_file = 'tracks.avi'
-    out = cv2.VideoWriter(output_file, fourcc, 25, output_size[:-1])
+    output_file = 'tracks.mp4'
+    # out = cv2.VideoWriter(output_file, fourcc, 25, output_size[:-1])
     
     for i in range(len(tracks)): # Number of tracks
         track_frame = np.zeros((output_size[0], output_size[1], 3), dtype=np.float32)
@@ -121,9 +121,11 @@ def _get_video_from_tracks(tracks, images):
             x1, y1, x2, y2 = pt
             x, y, w, h = x1, y1, x2 - x1, y2 - y1 # Top left coordinates and width and height respectively
             cv2.rectangle(track_frame, (int(x), int(y)), (int(x + w), int(y + h)),
-                          (0, 255, 0), 2)
-        frame = np.where(track_frame != 0, images[i], track_frame)
-        out.write(frame.astype(np.uint8))
+                          (0, 255, 0), 10)
+        frame = np.where(True, images[i], track_frame)
+        frame = Image.fromarray(frame.astype(np.uint8))
+        frame.save('image_folder/frame{}.jpg'.format(i)) 
+        # out.write(frame.astype(np.uint8))
 
-    out.release()
+    # out.release()
     return output_file
