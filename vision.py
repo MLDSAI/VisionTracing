@@ -106,6 +106,28 @@ def _setup_cfg(config, opts, conf_thresh):
 
 def _get_video_from_tracks(tracks, images):
     ''' Save a video showing tracks to disk and return the path '''
+    kelly_colors_rgb = [(255, 179, 0), (128, 62, 117), (255, 104, 0), (166, 189, 215),
+                    (193, 0, 32), (206, 162, 98), (129, 112, 102), (0, 125, 52),
+                    (246, 118, 142), (0, 83, 138), (255, 122, 92), (83, 55, 122),
+                    (255, 142, 0), (179, 40, 81), (244, 200, 0), (127, 24, 13),
+                    (147, 170, 0), (89, 51, 21), (241, 58, 19), (35, 44, 22)]
+    
+    kelly_colors = [[x[2], x[1], x[0]] for x in kelly_colors_rgb]
+    fourcc = cv2.VideoWriter_fourcc("MP4V")
+    output_size = images[0].shape
+    out = cv2.VideoWriter("tracks.mp4", fourcc, 25, output_size)
+    
+    for i in range(len(tracks)): # Number of tracks
+        track_frame = np.zeros((output_size[0], output_size[1], 3), dtype=np.float32)
+        for j in range(len(tracks[0])): # Number of bounding boxes within a track
+            pt = tracks[i][j]
+            if any(np.nan(pt)):
+                continue
+            x1, y1, x2, y2 = pt
+            x, y, w, h = x1, y1, x2 - x1, y2 - y1
+            cv2.rectangle(track_frame, (int(x), int(y)), (int(x + w), int(y + h)),
+                          (0, 255, 0), 2)
+        out.write(track_frame)
 
-    # TODO
-    pass
+    out.release()
+    return "tracks.mp4"
