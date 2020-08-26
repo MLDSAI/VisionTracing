@@ -147,7 +147,7 @@ def _get_video_from_tracks(tracks, images, output_file):
         os.mkdir("videos")
     clip.write_videofile('videos/' + output_file)
    
-   try:
+    try:
         shutil.rmtree(image_folder)
     except:
         print("Error in deleting image folder")
