@@ -97,6 +97,13 @@
               <li>
                 result: {{ job.result }}
               </li>
+              <li>
+                {% if job.result %}
+                <video width="320" height="240" controls>
+                    <source src="my_video.mp4" type="video/mp4">
+                </video>
+                {% endif %}
+              </li>
             </ul>
           </li>
         {% endfor %}
