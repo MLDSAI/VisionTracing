@@ -43,6 +43,7 @@ def upload():
     with open(fname_video, 'wb') as f:
       f.write(video_stream)
     
+    print("Current directory contents {}".format(os.listdir())) 
     one_week = 60 * 60 * 24 * 7
     fname, extension = fname_video.split('.')
     output_file = '{}-tracks{}.{}'.format(fname, time.time(), extension)

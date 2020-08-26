@@ -16,6 +16,7 @@ import moviepy.video.io.ImageSequenceClip
 
 def get_tracking_video(fpath_video, output_file):
     print('FPATH {}'.format(fpath_video))
+    print('FPATH exists: {}'.format(os.path.exists(fpath_video)))
     video, extension = fpath_video.split('.')
     print('Output file is {}'.format(output_file))
     logger.info(f'get_tracking_video fpath_video: {fpath_video}')
