@@ -13,7 +13,7 @@ from worker import conn, redis_url
 q = Queue(connection=conn)
 
 
-app = Flask(__name__)
+app = Flask(__name__, static_url_path='', static_folder='VisionTracing')
 app.config['LOG_LEVEL'] = os.getenv('LOG_LEVEL', 'DEBUG')
 app.config['RQ_DASHBOARD_REDIS_URL'] = redis_url
 app.config.from_object(rq_dashboard.default_settings)
@@ -22,6 +22,7 @@ app.register_blueprint(
 )
 
 jobs = []
+
 
 
 @app.route('/upload', methods=['POST'])
@@ -42,6 +43,8 @@ def upload():
         timeout=one_week
     )
     job.filename = fname_video
+    fname, extension = job.filename.split('.')
+    job.tracks_filename = fname + '-tracks.' + extension 
     jobs.append(job)
     logger.info(f'job: {job}')
 
