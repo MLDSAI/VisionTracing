@@ -11,14 +11,19 @@ from tqdm import tqdm
 from PIL import Image
 import tracking
 
+import moviepy.video.io.ImageSequenceClip
 
 def get_tracking_video(fpath_video):
+    print('FPATH {}'.format(fpath_video))
+    video, extension = fpath_video.split('.')
+    output_file = video + '-tracks.' + extension
+    print('Output file is {}'.format(output_file))
     logger.info(f'get_tracking_video fpath_video: {fpath_video}')
     image_gen  = _get_images_from_video(fpath_video)
     images = [image for image in image_gen]
     predictions = _get_predictions_from_images(images)
     tracks = tracking.get_tracks(predictions)
-    fpath_tracking_video = _get_video_from_tracks(tracks, images)
+    fpath_tracking_video = _get_video_from_tracks(tracks, images, output_file)
     return len(images), fpath_tracking_video
 
 
@@ -104,28 +109,39 @@ def _setup_cfg(config, opts, conf_thresh):
     return cfg
 
 
-def _get_video_from_tracks(tracks, images):
+def _get_video_from_tracks(tracks, images, output_file):
     ''' Save a video showing tracks to disk and return the path '''
-    
-    # fourcc = cv2.VideoWriter_fourcc(*'MP4V')
     output_size = images[0].shape
-    output_file = 'tracks.mp4'
-    # out = cv2.VideoWriter(output_file, fourcc, 25, output_size[:-1])
-    
-    for i in range(len(tracks)): # Number of tracks
+   
+    kelly_colors_rgb = [(255, 179, 0), (128, 62, 117), (255, 104, 0), (166, 189, 215),
+                    (193, 0, 32), (206, 162, 98), (129, 112, 102), (0, 125, 52),
+                    (246, 118, 142), (0, 83, 138), (255, 122, 92), (83, 55, 122),
+                    (255, 142, 0), (179, 40, 81), (244, 200, 0), (127, 24, 13),
+                    (147, 170, 0), (89, 51, 21), (241, 58, 19), (35, 44, 22)]
+
+    kelly_colors = [[x[2], x[1], x[0]] for x in kelly_colors_rgb]
+
+    for i in range(len(tracks[0])): # Number of tracks
         track_frame = np.zeros((output_size[0], output_size[1], 3), dtype=np.float32)
-        for j in range(len(tracks[0])): # Number of bounding boxes within a track
-            pt = tracks[i][j]
+
+        for j in range(len(tracks)): # Number of bounding boxes within a track
+            pt = tracks[j][i]
             if any(np.isnan(pt)):
                 continue
             x1, y1, x2, y2 = pt
             x, y, w, h = x1, y1, x2 - x1, y2 - y1 # Top left coordinates and width and height respectively
             cv2.rectangle(track_frame, (int(x), int(y)), (int(x + w), int(y + h)),
-                          (0, 255, 0), 10)
-        frame = np.where(True, images[i], track_frame)
+                          kelly_colors[j % len(kelly_colors)], 2)
+        try:
+            frame = np.where(track_frame != 0, track_frame, images[i])
+        except:
+            print("Breaking")
+            break
         frame = Image.fromarray(frame.astype(np.uint8))
         frame.save('image_folder/frame{}.jpg'.format(i)) 
-        # out.write(frame.astype(np.uint8))
-
-    # out.release()
+    
+    image_folder = 'image_folder'
+    image_files = [image_folder+'/'+img for img in os.listdir(image_folder) if img.endswith(".jpg")]
+    clip = moviepy.video.io.ImageSequenceClip.ImageSequenceClip(image_files, fps=5)
+    clip.write_videofile(output_file)
     return output_file
