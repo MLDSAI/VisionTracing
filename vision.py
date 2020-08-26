@@ -142,8 +142,12 @@ def _get_video_from_tracks(tracks, images, output_file):
     image_files = [image_folder+'/'+img for img in os.listdir(image_folder) if img.endswith(".jpg")]
     
     clip = moviepy.video.io.ImageSequenceClip.ImageSequenceClip(image_files, fps=5)
+   
+    if not os.path.exists("videos"):
+        os.mkdir("videos")
     clip.write_videofile('videos/' + output_file)
-    try:
+   
+   try:
         shutil.rmtree(image_folder)
     except:
         print("Error in deleting image folder")
