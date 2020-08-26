@@ -1,4 +1,5 @@
 import os
+import shutil
 import re
 import cv2
 import numpy as np
@@ -13,10 +14,9 @@ import tracking
 import time
 import moviepy.video.io.ImageSequenceClip
 
-def get_tracking_video(fpath_video):
+def get_tracking_video(fpath_video, output_file):
     print('FPATH {}'.format(fpath_video))
     video, extension = fpath_video.split('.')
-    output_file = video + '-tracks.' + extension
     print('Output file is {}'.format(output_file))
     logger.info(f'get_tracking_video fpath_video: {fpath_video}')
     image_gen  = _get_images_from_video(fpath_video)
@@ -143,4 +143,8 @@ def _get_video_from_tracks(tracks, images, output_file):
     
     clip = moviepy.video.io.ImageSequenceClip.ImageSequenceClip(image_files, fps=5)
     clip.write_videofile('videos/' + output_file)
+    try:
+        shutil.rmtree(image_folder)
+    except:
+        print("Error in deleting image folder")
     return output_file
