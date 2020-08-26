@@ -10,7 +10,7 @@ from loguru import logger
 from tqdm import tqdm
 from PIL import Image
 import tracking
-
+import time
 import moviepy.video.io.ImageSequenceClip
 
 def get_tracking_video(fpath_video):
@@ -120,7 +120,8 @@ def _get_video_from_tracks(tracks, images, output_file):
 
     kelly_colors = [[x[2], x[1], x[0]] for x in kelly_colors_rgb]
     
-    
+    image_folder = "image_folder_{}".format(time.time())    
+    os.mkdir(image_folder)
 
     for i in range(len(tracks[0])): # Number of tracks
         track_frame = np.zeros((output_size[0], output_size[1], 3), dtype=np.float32)
@@ -136,10 +137,10 @@ def _get_video_from_tracks(tracks, images, output_file):
         
         frame = np.where(track_frame != 0, track_frame, images[i])
         frame = Image.fromarray(frame.astype(np.uint8))
-        frame.save('image_folder/frame{}.jpg'.format(i)) 
+        frame.save('{}/frame{}.jpg'.format(image_folder, i)) 
     
-    image_folder = 'image_folder'
     image_files = [image_folder+'/'+img for img in os.listdir(image_folder) if img.endswith(".jpg")]
+    
     clip = moviepy.video.io.ImageSequenceClip.ImageSequenceClip(image_files, fps=5)
     clip.write_videofile('videos/' + output_file)
     return output_file
