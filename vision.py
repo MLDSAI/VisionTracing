@@ -112,7 +112,6 @@ def _setup_cfg(config, opts, conf_thresh):
 def _get_video_from_tracks(tracks, images, output_file):
     ''' Save a video showing tracks to disk and return the path '''
     output_size = images[0].shape
-   
     kelly_colors_rgb = [(255, 179, 0), (128, 62, 117), (255, 104, 0), (166, 189, 215),
                     (193, 0, 32), (206, 162, 98), (129, 112, 102), (0, 125, 52),
                     (246, 118, 142), (0, 83, 138), (255, 122, 92), (83, 55, 122),
@@ -135,7 +134,7 @@ def _get_video_from_tracks(tracks, images, output_file):
         try:
             frame = np.where(track_frame != 0, track_frame, images[i])
         except:
-            print("Breaking")
+            print("Breaking due to error!")
             break
         frame = Image.fromarray(frame.astype(np.uint8))
         frame.save('image_folder/frame{}.jpg'.format(i)) 
@@ -143,5 +142,5 @@ def _get_video_from_tracks(tracks, images, output_file):
     image_folder = 'image_folder'
     image_files = [image_folder+'/'+img for img in os.listdir(image_folder) if img.endswith(".jpg")]
     clip = moviepy.video.io.ImageSequenceClip.ImageSequenceClip(image_files, fps=5)
-    clip.write_videofile(output_file)
+    clip.write_videofile('videos/' + output_file)
     return output_file

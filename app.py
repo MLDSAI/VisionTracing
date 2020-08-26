@@ -2,7 +2,7 @@ import os
 
 from flask import (
     Flask, abort, Blueprint, flash, render_template, redirect, request,
-    url_for, flash, jsonify
+    url_for, flash, jsonify, send_from_directory
 )
 from loguru import logger
 from rq import Queue
@@ -13,7 +13,7 @@ from worker import conn, redis_url
 q = Queue(connection=conn)
 
 
-app = Flask(__name__, static_url_path='', static_folder='VisionTracing')
+app = Flask(__name__, static_url_path='')
 app.config['LOG_LEVEL'] = os.getenv('LOG_LEVEL', 'DEBUG')
 app.config['RQ_DASHBOARD_REDIS_URL'] = redis_url
 app.config.from_object(rq_dashboard.default_settings)
@@ -23,7 +23,9 @@ app.register_blueprint(
 
 jobs = []
 
-
+@app.route('/videos/<path:path>')
+def send_video(path):
+    return send_from_directory('videos', path)
 
 @app.route('/upload', methods=['POST'])
 def upload():
