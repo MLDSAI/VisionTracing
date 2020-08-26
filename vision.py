@@ -1,5 +1,5 @@
 import os
-
+import re
 import cv2
 import numpy as np
 import torch
@@ -119,6 +119,8 @@ def _get_video_from_tracks(tracks, images, output_file):
                     (147, 170, 0), (89, 51, 21), (241, 58, 19), (35, 44, 22)]
 
     kelly_colors = [[x[2], x[1], x[0]] for x in kelly_colors_rgb]
+    
+    
 
     for i in range(len(tracks[0])): # Number of tracks
         track_frame = np.zeros((output_size[0], output_size[1], 3), dtype=np.float32)
@@ -131,11 +133,8 @@ def _get_video_from_tracks(tracks, images, output_file):
             x, y, w, h = x1, y1, x2 - x1, y2 - y1 # Top left coordinates and width and height respectively
             cv2.rectangle(track_frame, (int(x), int(y)), (int(x + w), int(y + h)),
                           kelly_colors[j % len(kelly_colors)], 2)
-        try:
-            frame = np.where(track_frame != 0, track_frame, images[i])
-        except:
-            print("Breaking due to error!")
-            break
+        
+        frame = np.where(track_frame != 0, track_frame, images[i])
         frame = Image.fromarray(frame.astype(np.uint8))
         frame.save('image_folder/frame{}.jpg'.format(i)) 
     
