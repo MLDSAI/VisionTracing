@@ -34,6 +34,8 @@ def get_tracking_video(fpath_video, output_file):
     job.meta['step'] = 'Making video from tracks'
     job.save()
     fpath_tracking_video = _get_video_from_tracks(tracks, images, output_file)
+    job.meta['step'] = 'Done'
+    job.save()
     return len(images), fpath_tracking_video
 
 
