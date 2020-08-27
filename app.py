@@ -43,8 +43,6 @@ def upload():
     with open(fname_video, 'wb') as f:
       f.write(video_stream)
     
-    print("Files in current directory {}".format(os.listdir()))
-
     one_week = 60 * 60 * 24 * 7
     fname, extension = fname_video.split('.')
     output_file = '{}-tracks{}.{}'.format(fname, time.time(), extension)
@@ -53,6 +51,7 @@ def upload():
         args=(fname_video, output_file),
         timeout=one_week
     )
+     
     job.filename = fname_video
     job.tracks_filename = output_file 
     jobs.append(job)

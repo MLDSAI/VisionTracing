@@ -13,17 +13,23 @@ from PIL import Image
 import tracking
 import time
 import moviepy.video.io.ImageSequenceClip
+from rq import get_current_job
 
 def get_tracking_video(fpath_video, output_file):
-    print('FPATH {}'.format(fpath_video))
     video, extension = fpath_video.split('.')
-    print('Output file is {}'.format(output_file))
     logger.info(f'get_tracking_video fpath_video: {fpath_video}')
+    job = get_current_job()
+    job.step = 'Fetching images'
     image_gen  = _get_images_from_video(fpath_video)
     images = [image for image in image_gen]
+    print("Number of frames in images is {}".format(len(images)))
+    job.step = 'Getting predictions from images'
     predictions = _get_predictions_from_images(images)
+    job.step = 'Getting tracks from predictions'
     tracks = tracking.get_tracks(predictions)
+    job.step = 'Creating a video with tracks overlayed'
     fpath_tracking_video = _get_video_from_tracks(tracks, images, output_file)
+    job.step = 'Finished'
     return len(images), fpath_tracking_video
 
 
@@ -122,7 +128,8 @@ def _get_video_from_tracks(tracks, images, output_file):
     
     image_folder = "image_folder_{}".format(time.time())    
     os.mkdir(image_folder)
-
+    
+    image_files = []
     for i in range(len(tracks[0])): # Number of tracks
         track_frame = np.zeros((output_size[0], output_size[1], 3), dtype=np.float32)
 
@@ -137,11 +144,12 @@ def _get_video_from_tracks(tracks, images, output_file):
         
         frame = np.where(track_frame != 0, track_frame, images[i])
         frame = Image.fromarray(frame.astype(np.uint8))
-        frame.save('{}/frame{}.jpg'.format(image_folder, i)) 
+        image_file = '{}/frame{}.jpg'.format(image_folder, i)
+        image_files.append(image_file)
+        frame.save(image_file) 
     
-    image_files = [image_folder+'/'+img for img in os.listdir(image_folder) if img.endswith(".jpg")]
     
-    clip = moviepy.video.io.ImageSequenceClip.ImageSequenceClip(image_files, fps=5)
+    clip = moviepy.video.io.ImageSequenceClip.ImageSequenceClip(image_files, fps=15)
    
     if not os.path.exists("videos"):
         os.mkdir("videos")
