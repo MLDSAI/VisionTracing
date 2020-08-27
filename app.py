@@ -24,6 +24,14 @@ app.register_blueprint(
 
 jobs = []
 
+@app.template_filter('job_refresh')
+def job_refresh(job):
+    try:
+        job.refresh()
+    except:
+        pass
+    return job.filename
+
 @app.route('/videos/<path:path>')
 def send_video(path):
     return send_from_directory('videos', path)
