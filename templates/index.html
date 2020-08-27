@@ -109,34 +109,29 @@
     {% if jobs %}
       <h3>Videos</h3>
       <p>Refresh the page to update.</p>
-      <ul>
         {% for job in jobs %}
-            {{ job.refresh() }}
-          <li>
-            <ul>
+            <ul style="list-style-type:none;">
               <li>
-                filename: {{ job.filename }}
+              {{ job | job_refresh }}
               </li>
+              {% if job.meta.get('step') != 'Done' %}
               <li>
-                current_step: {{ job.meta.get('step') }}
-              </li>
-              <li>
-                is_finished: {{ job.is_finished }}
-              </li>
-              <li>
-                result: {{ job.result }}
-              </li>
-              <li>
-                {% if job.result %}
-                <video width="320" height="240" controls>
-                    <source src="/videos/{{ job.tracks_filename }}" type="video/mp4">
-                </video>
+                {% if not job.meta.get('step') %}
+                Starting processing...
+                {% else %}
+                {{ job.meta.get('step') }}
                 {% endif %}
               </li>
+              {% endif %}
+              {% if job.result %}
+              <li>
+                <video width="320" height="240" style="margin-left:auto;margin-right:auto;display:block" controls>
+                    <source src="/videos/{{ job.tracks_filename }}" type="video/mp4">
+                </video>
+              </li>
+              {% endif %}
             </ul>
-          </li>
         {% endfor %}
-      </ul>
     {% endif %}
 
   </div>
