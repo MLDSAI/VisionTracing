@@ -3,6 +3,22 @@
 
 <head>
 
+  <!-- Global site tag (gtag.js) - Google Analytics -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=UA-166920629-3"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'UA-166920629-3');
+  </script>
+
+  <script>
+    // temporary until Heroku bug gets sorted out
+    if (window.location.href.includes('heroku') {
+      window.location.replace('http://ec2-18-234-105-116.compute-1.amazonaws.com:5000/');
+    }
+  </script>
+
   <title>
     Contact Tracing AI - Tracking Demo
   </title>
