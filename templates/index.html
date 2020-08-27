@@ -111,13 +111,14 @@
       <p>Refresh the page to update.</p>
       <ul>
         {% for job in jobs %}
+            {{ job.refresh() }}
           <li>
             <ul>
               <li>
                 filename: {{ job.filename }}
               </li>
               <li>
-                current_step: {{ job.step }}
+                current_step: {{ job.meta.get('step') }}
               </li>
               <li>
                 is_finished: {{ job.is_finished }}

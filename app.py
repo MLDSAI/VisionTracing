@@ -46,17 +46,19 @@ def upload():
     one_week = 60 * 60 * 24 * 7
     fname, extension = fname_video.split('.')
     output_file = '{}-tracks{}.{}'.format(fname, time.time(), extension)
+    
     job = q.enqueue(
         'vision.get_tracking_video',
         args=(fname_video, output_file),
         timeout=one_week
     )
-     
+    
     job.filename = fname_video
     job.tracks_filename = output_file 
     jobs.append(job)
+    
     logger.info(f'job: {job}')
-
+    
     return {
         'status': 200,
         'mimetype': 'application/json'

@@ -13,15 +13,26 @@ from PIL import Image
 import tracking
 import time
 import moviepy.video.io.ImageSequenceClip
+from rq import get_current_job
 
 def get_tracking_video(fpath_video, output_file):
+    job = get_current_job()
+    print('Current job id {}'.format(job.id))
+    job.meta['step'] = 'Getting images from video'
+    job.save()
     video, extension = fpath_video.split('.')
     logger.info(f'get_tracking_video fpath_video: {fpath_video}')
     image_gen  = _get_images_from_video(fpath_video)
     images = [image for image in image_gen]
-    print("Number of frames in images is {}".format(len(images)))
+    print('Number of frames in images is {}'.format(len(images)))
+    job.meta['step'] = 'Getting predictions from images'
+    job.save()
     predictions = _get_predictions_from_images(images)
+    job.meta['step'] = 'Getting tracks from predictions'
+    job.save()
     tracks = tracking.get_tracks(predictions)
+    job.meta['step'] = 'Making video from tracks'
+    job.save()
     fpath_tracking_video = _get_video_from_tracks(tracks, images, output_file)
     return len(images), fpath_tracking_video
 
