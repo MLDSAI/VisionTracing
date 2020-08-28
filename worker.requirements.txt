@@ -10,3 +10,4 @@ torchvision==0.7
 numpy==1.19.1
 tqdm
 moviepy
+boto3==1.14.50
