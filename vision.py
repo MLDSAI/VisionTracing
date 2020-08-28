@@ -14,7 +14,6 @@ import tracking
 import time
 import moviepy.video.io.ImageSequenceClip
 from rq import get_current_job
-import boto3
 
 def get_tracking_video(s3, fpath_video, output_file):
     job = get_current_job()
