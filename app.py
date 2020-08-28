@@ -10,6 +10,9 @@ import rq_dashboard
 
 from worker import conn, redis_url
 import time
+import boto3
+
+import os
 
 q = Queue(connection=conn)
 
@@ -23,6 +26,15 @@ app.register_blueprint(
 )
 
 jobs = []
+
+S3_KEY = os.getenv('S3_KEY')
+S3_SECRET_ACCESS_KEY = os.getenv('S3_SECRET_ACCESS_KEY')
+
+s3 = boto3.client(
+        's3',
+        aws_access_key=S3_KEY,
+        aws_secret_access_key=S3_SECRET_ACCESS_KEY
+        )
 
 @app.template_filter('job_refresh')
 def job_refresh(job):
@@ -47,17 +59,16 @@ def upload():
 
     video_file = request.files.get('file')
     fname_video = video_file.filename
-    video_stream = video_file.read()
-    with open(fname_video, 'wb') as f:
-      f.write(video_stream)
-    
+   
+    s3.upload_file(fname_video, 'vision_tracing', fname_video)
+
     one_week = 60 * 60 * 24 * 7
     fname, extension = fname_video.split('.')
     output_file = '{}-tracks{}.{}'.format(fname, time.time(), extension)
     
     job = q.enqueue(
         'vision.get_tracking_video',
-        args=(fname_video, output_file),
+        args=(s3, fname_video, output_file),
         timeout=one_week
     )
     
