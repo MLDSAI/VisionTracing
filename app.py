@@ -59,7 +59,11 @@ def upload():
 
     video_file = request.files.get('file')
     fname_video = video_file.filename
-   
+    
+    video_stream = video_file.read()
+    with open(fname_video, 'wb') as f:
+        f.write(video_stream)
+
     s3.upload_file(fname_video, 'vision_tracing', fname_video)
 
     one_week = 60 * 60 * 24 * 7
