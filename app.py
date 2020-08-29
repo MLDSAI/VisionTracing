@@ -64,7 +64,8 @@ def upload():
     with open(fname_video, 'wb') as f:
         f.write(video_stream)
 
-    s3.upload_file(fname_video, 'vision_tracing', fname_video)
+    bucket = s3.Bucket('vision-tracing')
+    bucket.upload_file(fname_video, fname_video)
 
     one_week = 60 * 60 * 24 * 7
     fname, extension = fname_video.split('.')
@@ -72,7 +73,7 @@ def upload():
     
     job = q.enqueue(
         'vision.get_tracking_video',
-        args=(s3, fname_video, output_file),
+        args=(bucket, fname_video, output_file),
         timeout=one_week
     )
     

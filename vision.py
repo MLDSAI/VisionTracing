@@ -15,7 +15,7 @@ import time
 import moviepy.video.io.ImageSequenceClip
 from rq import get_current_job
 
-def get_tracking_video(s3, fpath_video, output_file):
+def get_tracking_video(bucket, fpath_video, output_file):
     job = get_current_job()
     print('Current job id {}'.format(job.id))
     job.meta['step'] = 'Getting images from video'
@@ -23,7 +23,7 @@ def get_tracking_video(s3, fpath_video, output_file):
     video, extension = fpath_video.split('.')
     logger.info(f'get_tracking_video fpath_video: {fpath_video}')
     
-    s3.download_file('vision_tracing', fpath_video, fpath_video)
+    bucket.download_file(fpath_video, fpath_video)
 
     image_gen  = _get_images_from_video(fpath_video)
     images = [image for image in image_gen]
@@ -124,7 +124,7 @@ def _setup_cfg(config, opts, conf_thresh):
     return cfg
 
 
-def _get_video_from_tracks(tracks, images, output_file, s3):
+def _get_video_from_tracks(tracks, images, output_file, bucket):
     ''' Save a video showing tracks to disk and return the path '''
     output_size = images[0].shape
     kelly_colors_rgb = [(255, 179, 0), (128, 62, 117), (255, 104, 0), (166, 189, 215),
@@ -165,7 +165,7 @@ def _get_video_from_tracks(tracks, images, output_file, s3):
     output_path = 'videos/' + output_file
     clip.write_videofile(output_path)
     
-    s3.upload_file(output_path, 'vision_tracing', output_path)
+    bucket.upload_file(output_path, output_path)
 
     try:
         shutil.rmtree(image_folder)
