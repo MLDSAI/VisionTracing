@@ -14,8 +14,9 @@ import tracking
 import time
 import moviepy.video.io.ImageSequenceClip
 from rq import get_current_job
+from app import bucket
 
-def get_tracking_video(bucket, fpath_video, output_file):
+def get_tracking_video(fpath_video, output_file):
     job = get_current_job()
     print('Current job id {}'.format(job.id))
     job.meta['step'] = 'Getting images from video'
@@ -36,7 +37,7 @@ def get_tracking_video(bucket, fpath_video, output_file):
     tracks = tracking.get_tracks(predictions)
     job.meta['step'] = 'Making video from tracks'
     job.save()
-    fpath_tracking_video = _get_video_from_tracks(tracks, images, output_file, s3)
+    fpath_tracking_video = _get_video_from_tracks(tracks, images, output_file)
     job.meta['step'] = 'Done'
     job.save()
     return len(images), fpath_tracking_video
@@ -124,7 +125,7 @@ def _setup_cfg(config, opts, conf_thresh):
     return cfg
 
 
-def _get_video_from_tracks(tracks, images, output_file, bucket):
+def _get_video_from_tracks(tracks, images, output_file):
     ''' Save a video showing tracks to disk and return the path '''
     output_size = images[0].shape
     kelly_colors_rgb = [(255, 179, 0), (128, 62, 117), (255, 104, 0), (166, 189, 215),

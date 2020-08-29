@@ -36,6 +36,8 @@ s3 = boto3.resource(
         aws_secret_access_key=S3_SECRET_ACCESS_KEY
         )
 
+bucket = s3.Bucket('vision-tracing')
+
 @app.template_filter('job_refresh')
 def job_refresh(job):
     try:
@@ -64,7 +66,6 @@ def upload():
     with open(fname_video, 'wb') as f:
         f.write(video_stream)
 
-    bucket = s3.Bucket('vision-tracing')
     bucket.upload_file(fname_video, fname_video)
 
     one_week = 60 * 60 * 24 * 7
@@ -73,7 +74,7 @@ def upload():
     
     job = q.enqueue(
         'vision.get_tracking_video',
-        args=(bucket, fname_video, output_file),
+        args=(fname_video, output_file),
         timeout=one_week
     )
     
