@@ -14,7 +14,7 @@ import boto3
 
 import os
 
-q = Queue(connection=conn)
+q = Queue(connection=conn, default_timeout=500)
 
 
 app = Flask(__name__, static_url_path='')
