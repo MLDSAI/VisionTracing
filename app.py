@@ -7,9 +7,10 @@ from flask import (
 from loguru import logger
 from rq import Queue
 import rq_dashboard
-
 from worker import conn, redis_url
 import time
+import json
+from flask_socketio import SocketIO
 
 q = Queue(connection=conn)
 
@@ -21,16 +22,26 @@ app.config.from_object(rq_dashboard.default_settings)
 app.register_blueprint(
     rq_dashboard.blueprint, url_prefix='/rq/'
 )
-
 jobs = []
+
+socket = SocketIO(app, cors_allowed_origins='*',  message_queue=os.getenv('REDIS_URL')) 
 
 @app.template_filter('job_refresh')
 def job_refresh(job):
-    try:
-        job.refresh()
-    except:
-        pass
+    if job.meta.get('status') != 'Done':
+        try:
+            job.refresh()
+            print('Job refreshed successfully')
+        except:
+            pass
     return job.filename
+
+@app.template_filter('jsonify_data')
+def jsonify_data(data):
+    try:
+        return json.dumps(data)
+    except:
+        return json.dumps('Beginning process...')
 
 @app.route('/videos/<path:path>')
 def send_video(path):

@@ -14,28 +14,68 @@ import tracking
 import time
 import moviepy.video.io.ImageSequenceClip
 from rq import get_current_job
+from flask_socketio import SocketIO
+from app import jsonify_data
 
 def get_tracking_video(fpath_video, output_file):
+    '''
+    Given the path to a video, creates a tracking video and writes it to the
+    path output_file
+    Parameters:
+    - str fpath_video: path to video file
+    - str output_file: path to output file (doesn't need to already exist)
+    '''
     job = get_current_job()
-    print('Current job id {}'.format(job.id))
-    job.meta['step'] = 'Getting images from video'
+    job_id = str(job.id)
+    pd = 'progress display'
+
+    # Opening socket
+    socketio = SocketIO(message_queue=os.getenv('REDIS_URL'), 
+                        cors_allowed_origins='*')
+    
+    # Getting images from video
+    status = 'Getting images from video'
+    socketio.emit(pd, {'status': status, 'id': job_id}, json=True)
+    job.meta['status'] = status
     job.save()
+    print('Sent "Getting images from video" through socket')
     video, extension = fpath_video.split('.')
     logger.info(f'get_tracking_video fpath_video: {fpath_video}')
     image_gen  = _get_images_from_video(fpath_video)
     images = [image for image in image_gen]
-    print('Number of frames in images is {}'.format(len(images)))
-    job.meta['step'] = 'Getting predictions from images'
+    
+    # Getting predictions from images
+    status = 'Getting predictions from images'
+    socketio.emit(pd, {'status': status, 'id': job_id}, json=True)        
+    job.meta['status'] = status
     job.save()
+    print('Sent "Getting getting predictions from images" through socket')  
     predictions = _get_predictions_from_images(images)
-    job.meta['step'] = 'Getting tracks from predictions'
+    
+    # Getting tracks from predictions
+    status = 'Getting tracks from predictions'
+    socketio.emit(pd, {'status': status, 'id': job_id}, json=True)        
+    job.meta['status'] = status        
     job.save()
+    print('Sent "Getting tracks from predictions" through socket')  
     tracks = tracking.get_tracks(predictions)
-    job.meta['step'] = 'Making video from tracks'
+
+    # Making video from tracks
+    status = 'Making video from tracks'
+    socketio.emit(pd, {'status': status, 'id': job_id}, json=True)        
+    job.meta['status'] = status        
     job.save()
+    print('Sent "Making video from tracks" through socket')  
     fpath_tracking_video = _get_video_from_tracks(tracks, images, output_file)
-    job.meta['step'] = 'Done'
+    
+    # Done
+    status = 'Done'
+    socketio.emit(pd, {'status': status, 'id': job_id, 
+                 'fname': fpath_tracking_video}, json=True)      
+    job.meta['status'] = status        
+    job.meta['tracks_filename'] = fpath_tracking_video
     job.save()
+    print('Sent "Done" through socket')  
     return len(images), fpath_tracking_video
 
 
