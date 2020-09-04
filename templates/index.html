@@ -44,7 +44,7 @@
   <script>
     Dropzone.autoDiscover = false
   </script>
-
+  <link rel="stylesheet" type="text/css" href="./spin/spin.css">
 </head>
 
 <style>
@@ -94,7 +94,7 @@
         Drag & drop the downloaded video into the rectangle below (or click on the rectangle to upload).
       </li>
       <li>
-        Refresh the page every couple of minutes until processing has completed (takes around 2 minutes to process the sample video).
+        Wait until the video has been processed. Progress information will be posted to the screen.
       </li>
     </ol>	
 
@@ -115,7 +115,11 @@
               </li>
               <li>
                 {% if job.meta.get('status') != 'Done' %}
-                  <div id="{{ job.id }}">{{ job.meta.get('status') }}</div>
+                  {% if job.meta.get('status') %}
+                    <div id="{{ job.id }}">{{ job.meta.get('status') }}</div>
+                  {% else %}
+                    <div id="{{ job.id }}">Beginning process...</div>
+                  {% endif %}
                 {% else %}
                   <div id="{{ job.id }}">
                     <video width="320" height="240" style="margin-left:auto;margin-right:auto;display:block" controls>
@@ -171,9 +175,17 @@
   </script>
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.0.4/socket.io.js"></script>
-
-  <script type='text/javascript'>
+  <script type='module'>
+    import { Spinner } from './spin/spin.js'
     var socket = io.connect('http://ec2-18-234-105-116.compute-1.amazonaws.com:5001');
+    
+    {% for job in jobs %}
+      var spinner = new Spinner().spin(document.getElementById('{{ job.id }}'));
+    {% endfor %}
+    var spinners = document.getElementsByClassName('spinner');
+    for(var i=0; i < spinners.length; i++) {
+     spinners[i].style.removeProperty('top');
+    }
     socket.on('connect', function() {
       console.log('Connected');
     });
@@ -181,6 +193,7 @@
       var job_status = job.status;
       var job_id = job.id;
       var job_fname = job.fname;
+
       console.log(job_status);
       console.log(job_id);
       if (typeof status === 'undefined') {
@@ -195,9 +208,15 @@
         </video>
         `;
       } else {
-        document.getElementById(job_id).innerHTML = innerHTML;
+        var target = document.getElementById(job_id);
+        target.innerHTML = innerHTML;
+        var spinner = new Spinner().spin(target);
+        var spinners = document.getElementsByClassName('spinner');                     
+        for(var i=0; i < spinners.length; i++) {                                       
+          spinners[i].style.removeProperty('top');                                      
+        }      
       }
-      console.log('Changed div ' + job.id);  
+      console.log('Changed div ${job_id}');  
     });
   </script>
 </body>
