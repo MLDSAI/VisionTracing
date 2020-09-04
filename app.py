@@ -28,6 +28,10 @@ socket = SocketIO(app, cors_allowed_origins='*',  message_queue=os.getenv('REDIS
 
 @app.template_filter('job_refresh')
 def job_refresh(job):
+    '''
+    This function updates the meta dictionary of a given job and returns the
+    job's filename
+    '''
     if job.meta.get('status') != 'Done':
         try:
             job.refresh()
@@ -38,6 +42,9 @@ def job_refresh(job):
 
 @app.template_filter('jsonify_data')
 def jsonify_data(data):
+    '''
+    This job converts an object to a string containing that object
+    '''
     try:
         return json.dumps(data)
     except:
@@ -50,6 +57,10 @@ def send_video(path):
 @app.route('/sample_video/<path:path>')
 def send_sample_video(path):
     return send_from_directory('sample_video', path)
+
+@app.route('/spin/<path:path>')
+def send_spinner(path):
+    return send_from_directory('spin', path)
 
 @app.route('/upload', methods=['POST'])
 def upload():
