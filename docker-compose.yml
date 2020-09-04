@@ -26,5 +26,6 @@ services:
     ports:
   redis:
     image: redis:alpine
+    command: redis-server --save ""  
     volumes:
       - "./redis-data:/data"
