@@ -23,7 +23,6 @@ services:
   db:
     image: postgres:latest
     env_file: .env
-    ports:
   redis:
     image: redis:alpine
     command: redis-server --save ""  
