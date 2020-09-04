@@ -25,6 +25,7 @@ def get_tracking_video(fpath_video, output_file):
     - str fpath_video: path to video file
     - str output_file: path to output file (doesn't need to already exist)
     '''
+    print('Cuda available {}'.format(torch.cuda.is_available()))
     job = get_current_job()
     job_id = str(job.id)
     pd = 'progress display'
