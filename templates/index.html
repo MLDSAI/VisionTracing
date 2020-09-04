@@ -177,7 +177,7 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.0.4/socket.io.js"></script>
   <script type='module'>
     import { Spinner } from './spin/spin.js'
-    var socket = io.connect('http://ec2-18-234-105-116.compute-1.amazonaws.com:5001');
+    var socket = io.connect('http://ec2-3-237-25-198.compute-1.amazonaws.com:5000/');
     
     {% for job in jobs %}
       var spinner = new Spinner().spin(document.getElementById('{{ job.id }}'));
