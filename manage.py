@@ -10,7 +10,7 @@ manager = Manager(app)
 def make_shell_context():
     return dict(app=app)
 
-port = os.getenv('PORT', 5001)
+port = os.getenv('PORT', 5000)
 manager.add_command('runserver', Server(port=port))
 manager.add_command('shell', Shell(make_context=make_shell_context))
 
