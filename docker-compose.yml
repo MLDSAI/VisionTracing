@@ -1,4 +1,4 @@
-version: '2'
+version: '3.7'
 services:
   web:
     build:
@@ -10,8 +10,11 @@ services:
     volumes:
       - ./:/app
     ports:
-      - "5001:5001"
+      - "5000:5000"
   worker:
+    device_requests:
+      - capabilities:
+        - "gpu"    
     build:
       context: .
       dockerfile: worker.Dockerfile
