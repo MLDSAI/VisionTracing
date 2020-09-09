@@ -179,18 +179,21 @@
     import { Spinner } from './spin/spin.js'
     var socket = io.connect('http://ec2-3-237-25-198.compute-1.amazonaws.com:5000/');
     
+    /* This block ensures that a spinner is created on refresh if a job is not done */
     {% for job in jobs %}
       {% if job.meta['status'] != 'Done' %}
-      	var spinner = new Spinner().spin(document.getElementById('{{ job.id }}'));
+      	new Spinner().spin(document.getElementById('{{ job.id }}'));
       {% endif %}
     {% endfor %}
-    var spinners = document.getElementsByClassName('spinner');
-    for(var i=0; i < spinners.length; i++) {
-     spinners[i].style.removeProperty('top');
-    }
+
+    /* If socket connection established correctly, logs connected */
     socket.on('connect', function() {
       console.log('Connected');
     });
+
+    /* If client receives a progress display event, the progress display message is 
+       updated
+    */
     socket.on('progress display', function(job) {
       var job_status = job.status;
       var job_id = job.id;
@@ -203,20 +206,16 @@
       } else {
         var innerHTML =  job_status;
       }
-      if (innerHTML === 'Done') {
+      if (innerHTML === 'Done') { /* Displays video to the UI if job is done */
         document.getElementById(job_id).innerHTML = `
         <video width="320" height="240" style="margin-left:auto;margin-right:auto;display:block" controls>
           <source src="/videos/${job_fname}" type="video/mp4">
         </video>
         `;
-      } else {
+      } else { /* If job is not finished, attach a spinner next to the job in the UI */
         var target = document.getElementById(job_id);
         target.innerHTML = innerHTML;
-        var spinner = new Spinner().spin(target);
-        var spinners = document.getElementsByClassName('spinner');                     
-        for(var i=0; i < spinners.length; i++) {                                       
-          spinners[i].style.removeProperty('top');                                      
-        }      
+        new Spinner().spin(target);
       }
       console.log('Changed div ' + job_id);  
     });
