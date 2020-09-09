@@ -82,6 +82,7 @@ export { Spinner };
  * Sets multiple style properties at once.
  */
 function css(el, props) {
+    console.log('Spinner props ', props);
     for (var prop in props) {
         el.style[prop] = props[prop];
     }
