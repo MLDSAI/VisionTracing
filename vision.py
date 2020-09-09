@@ -17,6 +17,21 @@ from rq import get_current_job
 from flask_socketio import SocketIO
 from app import jsonify_data
 
+def display_message(status, job, socketio):
+    '''
+    Given a status message, a job, and an open socket, updates the UI
+    to include the status message
+    Parameters:
+    - status: string
+    - job: REDIS job
+    - socketio: Socketio object
+    '''
+    socketio.emit('progress display', 
+                 {'status': status, 'id': str(job.id)}, json=True)
+    job.meta['status'] = status
+    job.save()
+    print('Changing status to "{}"'.format(status))
+
 def get_tracking_video(fpath_video, output_file):
     '''
     Given the path to a video, creates a tracking video and writes it to the
@@ -35,38 +50,23 @@ def get_tracking_video(fpath_video, output_file):
                         cors_allowed_origins='*')
     
     # Getting images from video
-    status = 'Getting images from video'
-    socketio.emit(pd, {'status': status, 'id': job_id}, json=True)
-    job.meta['status'] = status
-    job.save()
-    print('Sent "Getting images from video" through socket')
+    display_message('Getting images from video', job, socketio)
     video, extension = fpath_video.split('.')
     logger.info(f'get_tracking_video fpath_video: {fpath_video}')
     image_gen  = _get_images_from_video(fpath_video)
     images = [image for image in image_gen]
     
     # Getting predictions from images
-    status = 'Getting predictions from images'
-    socketio.emit(pd, {'status': status, 'id': job_id}, json=True)        
-    job.meta['status'] = status
-    job.save()
+    display_message('Getting predictions from images', job, socketio)
     print('Sent "Getting getting predictions from images" through socket')  
     predictions = _get_predictions_from_images(images)
     
     # Getting tracks from predictions
-    status = 'Getting tracks from predictions'
-    socketio.emit(pd, {'status': status, 'id': job_id}, json=True)        
-    job.meta['status'] = status        
-    job.save()
-    print('Sent "Getting tracks from predictions" through socket')  
+    display_message('Getting tracks from predictions', job, socketio)
     tracks = tracking.get_tracks(predictions)
 
     # Making video from tracks
-    status = 'Making video from tracks'
-    socketio.emit(pd, {'status': status, 'id': job_id}, json=True)        
-    job.meta['status'] = status        
-    job.save()
-    print('Sent "Making video from tracks" through socket')  
+    display_message('Making video from tracks', job, socketio)
     fpath_tracking_video = _get_video_from_tracks(tracks, images, output_file)
     
     # Done
@@ -107,7 +107,6 @@ def _get_predictions_from_images(images):
     '''
     Parameters:
     - list[np.ndarray images: list of images in chronological order
-
     Return:
     - TODO
     '''
