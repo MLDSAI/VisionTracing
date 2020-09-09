@@ -14,8 +14,8 @@
 
   <script>
     // temporary until Heroku bug gets sorted out
-    if (window.location.href.includes('heroku') && ! window.location.href.includes('-dev')) {
-      window.location.replace('http://ec2-18-234-105-116.compute-1.amazonaws.com:5000/')
+    if (window.location.href.includes('heroku')) {
+      window.location.replace('http://ec2-3-237-25-198.compute-1.amazonaws.com:5000/');
     }
   </script>
 
@@ -180,7 +180,9 @@
     var socket = io.connect('http://ec2-3-237-25-198.compute-1.amazonaws.com:5000/');
     
     {% for job in jobs %}
-      var spinner = new Spinner().spin(document.getElementById('{{ job.id }}'));
+      {% if job.meta['status'] != 'Done' %}
+      	var spinner = new Spinner().spin(document.getElementById('{{ job.id }}'));
+      {% endif %}
     {% endfor %}
     var spinners = document.getElementsByClassName('spinner');
     for(var i=0; i < spinners.length; i++) {
@@ -216,7 +218,7 @@
           spinners[i].style.removeProperty('top');                                      
         }      
       }
-      console.log('Changed div ${job_id}');  
+      console.log('Changed div ' + job_id);  
     });
   </script>
 </body>
