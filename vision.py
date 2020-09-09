@@ -42,8 +42,6 @@ def get_tracking_video(fpath_video, output_file):
     '''
     print('Cuda available {}'.format(torch.cuda.is_available()))
     job = get_current_job()
-    job_id = str(job.id)
-    pd = 'progress display'
 
     # Opening socket
     socketio = SocketIO(message_queue=os.getenv('REDIS_URL'), 
@@ -70,10 +68,9 @@ def get_tracking_video(fpath_video, output_file):
     fpath_tracking_video = _get_video_from_tracks(tracks, images, output_file)
     
     # Done
-    status = 'Done'
-    socketio.emit(pd, {'status': status, 'id': job_id, 
+    socketio.emit('progress display', {'status': 'Done', 'id': str(job.id), 
                  'fname': fpath_tracking_video}, json=True)      
-    job.meta['status'] = status        
+    job.meta['status'] = 'Done'        
     job.meta['tracks_filename'] = fpath_tracking_video
     job.save()
     print('Sent "Done" through socket')  
@@ -164,6 +161,8 @@ def _setup_cfg(config, opts, conf_thresh):
 def _get_video_from_tracks(tracks, images, output_file):
     ''' Save a video showing tracks to disk and return the path '''
     output_size = images[0].shape
+    
+    # Source: https://colab.research.google.com/drive/1CLRrAhhzo-mzPyVtF8tUszcXZ8gx5coI
     kelly_colors_rgb = [(255, 179, 0), (128, 62, 117), (255, 104, 0), (166, 189, 215),
                     (193, 0, 32), (206, 162, 98), (129, 112, 102), (0, 125, 52),
                     (246, 118, 142), (0, 83, 138), (255, 122, 92), (83, 55, 122),
