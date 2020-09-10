@@ -196,9 +196,9 @@ def _get_video_from_tracks(tracks, images, output_file):
     
     clip = moviepy.video.io.ImageSequenceClip.ImageSequenceClip(image_files, fps=15)
    
-    if not os.path.exists("videos"):
-        os.mkdir("videos")
-    clip.write_videofile('videos/' + output_file)
+    if not os.path.exists("static/videos"):
+        os.mkdir("static/videos")
+    clip.write_videofile('static/videos/' + output_file)
    
     try:
         shutil.rmtree(image_folder)
