@@ -111,7 +111,7 @@
         {% for job in jobs %}
             <ul style="list-style-type:none;">
               <li>
-              {{ job | job_refresh }}
+              {{ job | refresh_job }}
               </li>
               <li>
                 {% if job.meta.get('status') != 'Done' %}
