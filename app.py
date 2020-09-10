@@ -31,10 +31,14 @@ def refresh_job(job):
     '''
     This function updates the meta dictionary of a given job and returns the
     job's filename
+    Parameters:
+    - job: REDIS Queue job
     '''
-    if job.meta.get('status') != 'Done':
+    try:
         job.refresh()
         print('Job refreshed successfully')
+    except:
+        pass
     return job.filename
 
 @app.template_filter('jsonify_data')
