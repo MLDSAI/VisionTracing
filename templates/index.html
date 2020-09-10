@@ -44,7 +44,7 @@
   <script>
     Dropzone.autoDiscover = false
   </script>
-  <link rel="stylesheet" type="text/css" href="./spin/spin.css">
+  <link rel="stylesheet" type="text/css" href="/static/spin/spin.css">
 </head>
 
 <style>
@@ -88,7 +88,7 @@
     </h1>
     <ol>
       <li>
-        Click <a href="/sample_video/cut.mp4" download>here</a> to download a sample video.
+        Click <a href="/static/sample_video.mp4" download>here</a> to download a sample video.
       </li>
       <li>
         Drag & drop the downloaded video into the rectangle below (or click on the rectangle to upload).
@@ -123,7 +123,7 @@
                 {% else %}
                   <div id="{{ job.id }}">
                     <video width="320" height="240" style="margin-left:auto;margin-right:auto;display:block" controls>
-                      <source src="/videos/{{ job.meta.get('tracks_filename') }}" type="video/mp4">                     
+                      <source src="/static/videos/{{ job.meta.get('tracks_filename') }}" type="video/mp4">                     
                     </video>                                                                   
                   </div>
                 {% endif %}
@@ -176,7 +176,7 @@
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.0.4/socket.io.js"></script>
   <script type='module'>
-    import { Spinner } from './spin/spin.js'
+    import { Spinner } from '/static/spin/spin.js'
     var socket = io.connect('http://ec2-3-237-25-198.compute-1.amazonaws.com:5000/');
     
     /* This block ensures that a spinner is created on refresh if a job is not done */
@@ -209,7 +209,7 @@
       if (innerHTML === 'Done') { /* Displays video to the UI if job is done */
         document.getElementById(job_id).innerHTML = `
         <video width="320" height="240" style="margin-left:auto;margin-right:auto;display:block" controls>
-          <source src="/videos/${job_fname}" type="video/mp4">
+          <source src="/static/videos/${job_fname}" type="video/mp4">
         </video>
         `;
       } else { /* If job is not finished, attach a spinner next to the job in the UI */
