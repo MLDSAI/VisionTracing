@@ -44,17 +44,9 @@ def jsonify_data(data):
     '''
     return json.dumps(data)
 
-@app.route('/videos/<path:path>')
-def send_video(path):
-    return send_from_directory('videos', path)
-
-@app.route('/sample_video/<path:path>')
-def send_sample_video(path):
-    return send_from_directory('sample_video', path)
-
-@app.route('/spin/<path:path>')
-def send_spinner(path):
-    return send_from_directory('spin', path)
+@app.route('/static/<path:path>')
+def send_static(path):
+    return send_from_directory('static', path)
 
 @app.route('/upload', methods=['POST'])
 def upload():
