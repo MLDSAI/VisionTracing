@@ -114,16 +114,16 @@
               {{ job | refresh_job }}
               </li>
               <li>
-                {% if job.meta.get('status') != 'Done' %}
-                  {% if job.meta.get('status') %}
-                    <div id="{{ job.id }}">{{ job.meta.get('status') }}</div>
-                  {% else %}
-                    <div id="{{ job.id }}">Beginning process...</div>
-                  {% endif %}
-                {% else %}
+                {% if not job.is_finished %}
+		    {% if job.meta.get('status') %}
+                        <div id="{{ job.id }}">{{ job.meta.get('status') }}</div>
+                    {% else %}
+		    	<div id="{{ job.id }}">Beginning process...</div>
+		    {% endif %}
+		{% else %}
                   <div id="{{ job.id }}">
                     <video width="320" height="240" style="margin-left:auto;margin-right:auto;display:block" controls>
-                      <source src="/static/videos/{{ job.meta.get('tracks_filename') }}" type="video/mp4">                     
+                      <source src="/static/videos/{{ job.tracks_filename }}" type="video/mp4">                     
                     </video>                                                                   
                   </div>
                 {% endif %}
@@ -181,7 +181,7 @@
     
     /* This block ensures that a spinner is created on refresh if a job is not done */
     {% for job in jobs %}
-      {% if job.meta['status'] != 'Done' %}
+      {% if not job.is_finished %}
       	new Spinner().spin(document.getElementById('{{ job.id }}'));
       {% endif %}
     {% endfor %}
