@@ -26,18 +26,15 @@ jobs = []
 
 socket = SocketIO(app, cors_allowed_origins='*',  message_queue=os.getenv('REDIS_URL')) 
 
-@app.template_filter('job_refresh')
-def job_refresh(job):
+@app.template_filter('refresh_job')
+def refresh_job(job):
     '''
     This function updates the meta dictionary of a given job and returns the
     job's filename
     '''
     if job.meta.get('status') != 'Done':
-        try:
-            job.refresh()
-            print('Job refreshed successfully')
-        except:
-            pass
+        job.refresh()
+        print('Job refreshed successfully')
     return job.filename
 
 @app.template_filter('jsonify_data')
@@ -45,10 +42,7 @@ def jsonify_data(data):
     '''
     This job converts an object to a string containing that object
     '''
-    try:
-        return json.dumps(data)
-    except:
-        return json.dumps('Beginning process...')
+    return json.dumps(data)
 
 @app.route('/videos/<path:path>')
 def send_video(path):
