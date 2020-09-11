@@ -43,8 +43,10 @@ def get_tracking_video(fpath_video, output_file):
     job = get_current_job()
 
     # Opening socket
-    socketio = SocketIO(message_queue=os.getenv('REDIS_URL'), 
-                        cors_allowed_origins='*')
+    socketio = SocketIO(
+        message_queue=os.getenv('REDIS_URL'), 
+        cors_allowed_origins='*'
+    )
     
     # Getting images from video
     display_message('Getting images from video', job, socketio)
