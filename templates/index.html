@@ -165,7 +165,8 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.0.4/socket.io.js"></script>
   <script type='module'>
     import { Spinner } from '/static/spin/spin.js'
-    
+   
+    /* This block is required to add a spinner if the user refreshes and the job is not done */
     {% for job in jobs %}
       {% if job.meta.get('status') and job.meta.get('status') != 'Done' %}
         new Spinner().spin(document.getElementById('{{ job.id }}'));
