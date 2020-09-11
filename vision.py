@@ -15,7 +15,6 @@ import time
 import moviepy.video.io.ImageSequenceClip
 from rq import get_current_job
 from flask_socketio import SocketIO
-from app import jsonify_data
 
 def display_message(status, job, socketio):
     '''
