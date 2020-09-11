@@ -2,27 +2,68 @@ import os
 
 from flask import (
     Flask, abort, Blueprint, flash, render_template, redirect, request,
-    url_for, flash, jsonify
+    url_for, flash, jsonify, send_from_directory, Markup
 )
 from loguru import logger
 from rq import Queue
 import rq_dashboard
-
 from worker import conn, redis_url
+import time
+import json
+from flask_socketio import SocketIO
 
 q = Queue(connection=conn)
 
 
-app = Flask(__name__)
+app = Flask(__name__, static_url_path='')
 app.config['LOG_LEVEL'] = os.getenv('LOG_LEVEL', 'DEBUG')
 app.config['RQ_DASHBOARD_REDIS_URL'] = redis_url
 app.config.from_object(rq_dashboard.default_settings)
 app.register_blueprint(
     rq_dashboard.blueprint, url_prefix='/rq/'
 )
-
 jobs = []
 
+socket = SocketIO(app, cors_allowed_origins='*',  message_queue=os.getenv('REDIS_URL')) 
+
+@app.template_filter('refresh_job')
+def refresh_job(job):
+    '''
+    This function updates the meta dictionary of a given job and returns the
+    job's filename
+    Parameters:
+    - job: REDIS Queue job
+    '''
+    try:
+        job.refresh()
+        print('Job refreshed successfully')
+    except: 
+        pass
+    return job.filename
+
+@app.template_filter('video_exists')
+def video_exists(job):
+    '''
+    This function checks whether or not a video with the job's track filename 
+    exists. If it exists, then it returns HTML markup for the video source.
+    Else, it returns the progress information.
+    Parameters:
+    - job: REDIS Queue job
+    '''
+    source = 'static/videos/{}'.format(job.tracks_filename)
+    if os.path.exists(source):
+        return Markup("""
+        <video width="320" height="240" style="margin-left:auto;margin-right:auto;display:block" controls>
+          <source src="/{}" type="video/mp4">
+        </video>
+        """.format(source))
+    if job.meta.get('status'): 
+        return job.meta.get('status')
+    return 'Beginning process...'
+
+@app.route('/static/<path:path>')
+def send_static(path):
+    return send_from_directory('static', path)
 
 @app.route('/upload', methods=['POST'])
 def upload():
@@ -34,17 +75,22 @@ def upload():
     video_stream = video_file.read()
     with open(fname_video, 'wb') as f:
       f.write(video_stream)
-
+    
     one_week = 60 * 60 * 24 * 7
+    fname, extension = fname_video.split('.')
+    output_file = '{}-tracks{}.{}'.format(fname, time.time(), extension)
+    
     job = q.enqueue(
         'vision.get_tracking_video',
-        args=(fname_video,),
+        args=(fname_video, output_file),
         timeout=one_week
     )
     job.filename = fname_video
+    job.tracks_filename = output_file 
     jobs.append(job)
+    
     logger.info(f'job: {job}')
-
+    
     return {
         'status': 200,
         'mimetype': 'application/json'
