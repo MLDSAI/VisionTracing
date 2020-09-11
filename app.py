@@ -15,7 +15,7 @@ from flask_socketio import SocketIO
 q = Queue(connection=conn)
 
 
-app = Flask(__name__, static_url_path='')
+app = Flask(__name__, static_url_path='/static')
 app.config['LOG_LEVEL'] = os.getenv('LOG_LEVEL', 'DEBUG')
 app.config['RQ_DASHBOARD_REDIS_URL'] = redis_url
 app.config.from_object(rq_dashboard.default_settings)
@@ -61,9 +61,9 @@ def video_exists(job):
         return job.meta.get('status')
     return 'Beginning process...'
 
-@app.route('/static/<path:path>')
+@app.route('/<path:path>')
 def send_static(path):
-    return send_from_directory('static', path)
+    return send_from_directory('', path)
 
 @app.route('/upload', methods=['POST'])
 def upload():
