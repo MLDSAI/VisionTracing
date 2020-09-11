@@ -109,25 +109,13 @@
     {% if jobs %}
       <h3>Videos</h3>
         {% for job in jobs %}
-            <ul style="list-style-type:none;">
+	<ul style="list-style-type:none;">
               <li>
               {{ job | refresh_job }}
               </li>
-              <li>
-                {% if not job.is_finished %}
-		    {% if job.meta.get('status') %}
-                        <div id="{{ job.id }}">{{ job.meta.get('status') }}</div>
-                    {% else %}
-		    	<div id="{{ job.id }}">Beginning process...</div>
-		    {% endif %}
-		{% else %}
-                  <div id="{{ job.id }}">
-                    <video width="320" height="240" style="margin-left:auto;margin-right:auto;display:block" controls>
-                      <source src="/static/videos/{{ job.tracks_filename }}" type="video/mp4">                     
-                    </video>                                                                   
-                  </div>
-                {% endif %}
-              </li>
+	      <li id="{{ job.id }}">
+              {{ job | video_exists }}
+	      </li>
             </ul>
         {% endfor %}
     {% endif %}
@@ -177,15 +165,15 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.0.4/socket.io.js"></script>
   <script type='module'>
     import { Spinner } from '/static/spin/spin.js'
-    var socket = io.connect('http://ec2-3-237-25-198.compute-1.amazonaws.com:5000/');
     
-    /* This block ensures that a spinner is created on refresh if a job is not done */
     {% for job in jobs %}
-      {% if not job.is_finished %}
-      	new Spinner().spin(document.getElementById('{{ job.id }}'));
+      {% if job.meta.get('status') and job.meta.get('status') != 'Done' %}
+        new Spinner().spin(document.getElementById('{{ job.id }}'));
       {% endif %}
     {% endfor %}
 
+    var socket = io.connect('http://ec2-3-237-25-198.compute-1.amazonaws.com:5000/');
+    
     /* If socket connection established correctly, logs connected */
     socket.on('connect', function() {
       console.log('Connected');
