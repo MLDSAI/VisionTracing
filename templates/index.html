@@ -45,6 +45,7 @@
     Dropzone.autoDiscover = false
   </script>
   <link rel="stylesheet" type="text/css" href="/static/spin/spin.css">
+  <link rel="stylesheet" type="text/css" href="/static/style/style.css">
 </head>
 
 <style>
@@ -197,7 +198,7 @@
       }
       if (innerHTML === 'Done') { /* Displays video to the UI if job is done */
         document.getElementById(job_id).innerHTML = `
-        <video width="320" height="240" style="margin-left:auto;margin-right:auto;display:block" controls>
+        <video width="320" height="240" controls>
           <source src="/static/videos/${job_fname}" type="video/mp4">
         </video>
         `;
