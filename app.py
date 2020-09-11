@@ -37,8 +37,8 @@ def refresh_job(job):
     try:
         job.refresh()
         print('Job refreshed successfully')
-    except: 
-        pass
+    except Exception as e: 
+        print('Job did not refresh properly, exception {}'.format(e))
     return job.filename
 
 @app.template_filter('video_exists')
@@ -53,7 +53,7 @@ def video_exists(job):
     source = 'static/videos/{}'.format(job.tracks_filename)
     if os.path.exists(source):
         return Markup("""
-        <video width="320" height="240" style="margin-left:auto;margin-right:auto;display:block" controls>
+        <video width="320" height="240" controls>
           <source src="/{}" type="video/mp4">
         </video>
         """.format(source))
