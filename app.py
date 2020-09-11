@@ -2,7 +2,7 @@ import os
 
 from flask import (
     Flask, abort, Blueprint, flash, render_template, redirect, request,
-    url_for, flash, jsonify, send_from_directory
+    url_for, flash, jsonify, send_from_directory, Markup
 )
 from loguru import logger
 from rq import Queue
@@ -37,16 +37,29 @@ def refresh_job(job):
     try:
         job.refresh()
         print('Job refreshed successfully')
-    except:
+    except: 
         pass
     return job.filename
 
-@app.template_filter('jsonify_data')
-def jsonify_data(data):
+@app.template_filter('video_exists')
+def video_exists(job):
     '''
-    This job converts an object to a string containing that object
+    This function checks whether or not a video with the job's track filename 
+    exists. If it exists, then it returns HTML markup for the video source.
+    Else, it returns the progress information.
+    Parameters:
+    - job: REDIS Queue job
     '''
-    return json.dumps(data)
+    source = 'static/videos/{}'.format(job.tracks_filename)
+    if os.path.exists(source):
+        return Markup("""
+        <video width="320" height="240" style="margin-left:auto;margin-right:auto;display:block" controls>
+          <source src="/{}" type="video/mp4">
+        </video>
+        """.format(source))
+    if job.meta.get('status'): 
+        return job.meta.get('status')
+    return 'Beginning process...'
 
 @app.route('/static/<path:path>')
 def send_static(path):
@@ -72,7 +85,6 @@ def upload():
         args=(fname_video, output_file),
         timeout=one_week
     )
-    
     job.filename = fname_video
     job.tracks_filename = output_file 
     jobs.append(job)
