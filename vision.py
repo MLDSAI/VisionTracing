@@ -1,6 +1,8 @@
 import os
 import shutil
 import re
+import time
+
 import cv2
 import numpy as np
 import torch
@@ -10,11 +12,11 @@ from detectron2.config import get_cfg
 from loguru import logger
 from tqdm import tqdm
 from PIL import Image
-import tracking
-import time
 import moviepy.video.io.ImageSequenceClip
 from rq import get_current_job
 from flask_socketio import SocketIO
+
+import tracking 
 
 def display_message(status, job, socketio):
     '''
