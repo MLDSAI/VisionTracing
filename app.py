@@ -1,4 +1,6 @@
 import os
+import time
+import json
 
 from flask import (
     Flask, abort, Blueprint, flash, render_template, redirect, request,
@@ -8,8 +10,6 @@ from loguru import logger
 from rq import Queue
 import rq_dashboard
 from worker import conn, redis_url
-import time
-import json
 from flask_socketio import SocketIO
 
 q = Queue(connection=conn)
