@@ -18,7 +18,7 @@ from flask_socketio import SocketIO
 
 import tracking 
 
-def display_message(status, job, socketio):
+def display_message(status, job, socketio, fname=None):
     '''
     Given a status message, a job, and an open socket, updates the UI
     to include the status message
@@ -26,9 +26,17 @@ def display_message(status, job, socketio):
     - status: string
     - job: REDIS job
     - socketio: Socketio object
+    - fname: string, path to output tracks video
     '''
-    socketio.emit('progress display', 
-                 {'status': status, 'id': str(job.id)}, json=True)
+    status_dict = {
+                    'status': status,
+                    'id': str(job.id)
+                  }
+    
+    if fname is not None:
+        status_dict['fname'] = fname
+
+    socketio.emit('progress display', status_dict, json=True)
     job.meta['status'] = status
     job.save()
     logger.info('Changing status to "{}"'.format(status))
@@ -69,16 +77,7 @@ def get_tracking_video(fpath_video, output_file):
     fpath_tracking_video = _get_video_from_tracks(tracks, images, output_file)
     
     # Done
-    status_dict = {
-                    'status': 'Done',
-                    'id': str(job.id),
-                    'fname': fpath_tracking_video}
-                  }
-    socketio.emit('progress display', status_dict, json=True)      
-    job.meta['status'] = 'Done'        
-    job.meta['tracks_filename'] = fpath_tracking_video
-    job.save()
-    logger.info('Done job id={}'.format(job.id))  
+    display_message('Done', job, socketio, fpath_tracking_video)
     return len(images), fpath_tracking_video
 
 
