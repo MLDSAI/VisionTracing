@@ -69,8 +69,12 @@ def get_tracking_video(fpath_video, output_file):
     fpath_tracking_video = _get_video_from_tracks(tracks, images, output_file)
     
     # Done
-    socketio.emit('progress display', {'status': 'Done', 'id': str(job.id), 
-                 'fname': fpath_tracking_video}, json=True)      
+    status_dict = {
+                    'status': 'Done',
+                    'id': str(job.id),
+                    'fname': fpath_tracking_video}
+                  }
+    socketio.emit('progress display', status_dict, json=True)      
     job.meta['status'] = 'Done'        
     job.meta['tracks_filename'] = fpath_tracking_video
     job.save()
