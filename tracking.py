@@ -797,7 +797,7 @@ def compute_matches(tracks, t, max_age,
   Returns:
       matches: A 1D np.ndarray with as many elements as boxes in current
       frame (cur_boxes). For each, there is an integer to index the previous
-      frame box that it matches to, or -1 if it doesi not match to any previous
+      frame box that it matches to, or -1 if it does not match to any previous
       box.
   """
   # If there are no tracks, just set everything as new tracks
@@ -845,7 +845,9 @@ def update_tracks(tracks, matches, i, all_boxes, all_keypoints):
 
   Args:
   """
-  print(matches)
+  
+  print('Matches {}'.format(matches))
+
   for t in range(len(matches)):
     idx = matches[t]
     if idx == -1:
