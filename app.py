@@ -124,8 +124,7 @@ def upload():
     one_week = 60 * 60 * 24 * 7
     fname, extension = fname_video.split('.')
     output_file = '{}-tracks{}.{}'.format(fname, time.time(), extension)
-    
-    # Result ttl set to -1 so that the job never expires (jobs must be removed manually)
+   
     job = q.enqueue(
         'vision.get_tracking_video',
         args=(fname_video, output_file),
