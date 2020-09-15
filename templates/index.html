@@ -44,8 +44,8 @@
   <script>
     Dropzone.autoDiscover = false
   </script>
-  <link rel="stylesheet" type="text/css" href="/static/spin/spin.css">
-  <link rel="stylesheet" type="text/css" href="/static/style/style.css">
+  <link rel="stylesheet" type="text/css" href="/static/css/lib/spin.css">
+  <link rel="stylesheet" type="text/css" href="/static/css/lib/style.css">
 </head>
 
 <style>
@@ -166,7 +166,7 @@
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.0.4/socket.io.js"></script>
   <script type='module'>
-    import { Spinner } from '/static/spin/spin.js'
+    import { Spinner } from '/static/js/lib/spin.js'
     
     /* This block is required to add a spinner if the user refreshes and the job is not done */
     {% for job_dict in session['jobs'] %}
