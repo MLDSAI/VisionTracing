@@ -105,17 +105,17 @@
           Drop files here or click to upload.
         </div>
       </form>
-    </div>
-    
-    {% if jobs %}
+    </div>    
+    {% set session_is_empty = session|empty_session %}
+    {% if not session_is_empty %}
       <h3>Videos</h3>
-        {% for job in jobs %}
+        {% for job_dict in session['jobs'] %}
 	<ul style="list-style-type:none;">
               <li>
-              {{ job | refresh_job }}
+              {{ job_dict | refresh_job }}
               </li>
-	      <li id="{{ job.id }}">
-              {{ job | video_exists }}
+	      <li id="{{ job_dict['id'] }}">
+              {{ job_dict | display_job }}
 	      </li>
             </ul>
         {% endfor %}
@@ -148,9 +148,10 @@
     url: '{{ url_for('upload') }}',
     paramName: "file", // The name that will be used to transfer the file
     acceptedFiles: 'video/*',
+    parallelUploads: 1,
     success: function(file, response) {
-      console.log('success, file:', file, 'response:', response)
-      location.reload();
+      console.log('success, file:', file, 'response:', response);
+      Turbolinks.visit(location.toString());
     },
     timeout: 120000,
     // TODO: chunking
@@ -166,11 +167,12 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.0.4/socket.io.js"></script>
   <script type='module'>
     import { Spinner } from '/static/spin/spin.js'
-   
+    
     /* This block is required to add a spinner if the user refreshes and the job is not done */
-    {% for job in jobs %}
-      {% if job.meta.get('status') and job.meta.get('status') != 'Done' %}
-        new Spinner().spin(document.getElementById('{{ job.id }}'));
+    {% for job_dict in session['jobs'] %}
+      {% set job = q.fetch_job(job_dict['id']) %}
+      {% if job and job.meta.get('status') and job.meta.get('status') != 'Done' %}
+        new Spinner().spin(document.getElementById('{{ job_dict["id"] }}'));
       {% endif %}
     {% endfor %}
 
