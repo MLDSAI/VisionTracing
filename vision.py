@@ -31,7 +31,7 @@ def display_message(status, job, socketio):
                  {'status': status, 'id': str(job.id)}, json=True)
     job.meta['status'] = status
     job.save()
-    print('Changing status to "{}"'.format(status))
+    logger.info('Changing status to "{}"'.format(status))
 
 def get_tracking_video(fpath_video, output_file):
     '''
@@ -41,7 +41,7 @@ def get_tracking_video(fpath_video, output_file):
     - str fpath_video: path to video file
     - str output_file: path to output file (doesn't need to already exist)
     '''
-    print('Cuda available {}'.format(torch.cuda.is_available()))
+    logger.info('Cuda available {}'.format(torch.cuda.is_available()))
     job = get_current_job()
 
     # Opening socket
@@ -53,13 +53,11 @@ def get_tracking_video(fpath_video, output_file):
     # Getting images from video
     display_message('Getting images from video', job, socketio)
     video, extension = fpath_video.split('.')
-    logger.info(f'get_tracking_video fpath_video: {fpath_video}')
     image_gen  = _get_images_from_video(fpath_video)
     images = [image for image in image_gen]
     
     # Getting predictions from images
     display_message('Getting predictions from images', job, socketio)
-    print('Sent "Getting getting predictions from images" through socket')  
     predictions = _get_predictions_from_images(images)
     
     # Getting tracks from predictions
@@ -76,7 +74,7 @@ def get_tracking_video(fpath_video, output_file):
     job.meta['status'] = 'Done'        
     job.meta['tracks_filename'] = fpath_tracking_video
     job.save()
-    print('Sent "Done" through socket')  
+    logger.info('Done job id={}'.format(job.id))  
     return len(images), fpath_tracking_video
 
 
@@ -149,7 +147,7 @@ def _setup_cfg(config, opts, conf_thresh):
     # load config from file and arguments
     cfg = get_cfg()
     if not torch.cuda.device_count():
-        print('Running on CPU')
+        logger.info('Running on CPU')
         cfg.MODEL.DEVICE = 'cpu'
     cfg.merge_from_file(config)
     cfg.merge_from_list(opts)
@@ -199,12 +197,12 @@ def _get_video_from_tracks(tracks, images, output_file):
     
     clip = moviepy.video.io.ImageSequenceClip.ImageSequenceClip(image_files, fps=15)
    
-    if not os.path.exists("static/videos"):
-        os.mkdir("static/videos")
+    if not os.path.exists('static/videos'):
+        os.mkdir('static/videos')
     clip.write_videofile('static/videos/' + output_file)
    
     try:
         shutil.rmtree(image_folder)
-    except:
-        print("Error in deleting image folder")
+    except Exception as e:
+        logger.info('Error in deleting image folder: {}'.format(e))
     return output_file
