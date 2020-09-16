@@ -32,6 +32,8 @@ socket = SocketIO(
             manage_session=False
          )
 
+URL = os.getenv('URL')
+
 @app.template_filter('empty_session')
 def empty_session(session):
     '''
@@ -169,5 +171,6 @@ def index():
     # TODO: use websockets to update client without refresh
     return render_template(
         'index.html',
-        q=q
+        q=q,
+        URL=URL
     )
