@@ -29,8 +29,8 @@ def display_message(status, job, socketio, fname=None):
     - fname: string, path to output tracks video
     '''
     status_dict = {
-                    'status': status,
-                    'id': str(job.id)
+                'status': status,
+                'id': str(job.id)
                   }
     
     if fname is not None:
@@ -61,7 +61,7 @@ def get_tracking_video(fpath_video, output_file):
     # Getting images from video
     display_message('Getting images from video', job, socketio)
     video, extension = fpath_video.split('.')
-    image_gen  = _get_images_from_video(fpath_video)
+    image_gen, fps  = _get_images_from_video(fpath_video)
     images = [image for image in image_gen]
     
     # Getting predictions from images
@@ -74,7 +74,7 @@ def get_tracking_video(fpath_video, output_file):
 
     # Making video from tracks
     display_message('Making video from tracks', job, socketio)
-    fpath_tracking_video = _get_video_from_tracks(tracks, images, output_file)
+    fpath_tracking_video = _get_video_from_tracks(tracks, images, fps, output_file)
     
     # Done
     display_message('Done', job, socketio, fpath_tracking_video)
@@ -101,7 +101,8 @@ def _get_images_from_video(fpath_video):
     
     video_capture = cv2.VideoCapture(fpath_video)
     image_gen = _frame_from_video(video_capture)
-    return image_gen
+    fps = video_capture.get(cv2.CAP_PROP_FPS)
+    return image_gen, fps
 
 
 def _get_predictions_from_images(images):
@@ -162,7 +163,7 @@ def _setup_cfg(config, opts, conf_thresh):
     return cfg
 
 
-def _get_video_from_tracks(tracks, images, output_file):
+def _get_video_from_tracks(tracks, images, fps, output_file):
     ''' Save a video showing tracks to disk and return the path '''
     output_size = images[0].shape
     
@@ -198,7 +199,7 @@ def _get_video_from_tracks(tracks, images, output_file):
         frame.save(image_file) 
     
     
-    clip = moviepy.video.io.ImageSequenceClip.ImageSequenceClip(image_files, fps=30)
+    clip = moviepy.video.io.ImageSequenceClip.ImageSequenceClip(image_files, fps=fps)
    
     if not os.path.exists('static/videos'):
         os.mkdir('static/videos')
