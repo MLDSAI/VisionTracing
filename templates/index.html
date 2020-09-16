@@ -153,7 +153,7 @@
     url: '{{ url_for('upload') }}',
     paramName: "file", // The name that will be used to transfer the file
     acceptedFiles: 'video/*',
-    parallelUploads: 1,
+    parallelUploads: 1, // Must be set to 1 to prevent session['jobs'] from being overridden
     success: function(file, response) {
       console.log('success, file:', file, 'response:', response);
       Turbolinks.visit(location.toString());
