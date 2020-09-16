@@ -29,9 +29,9 @@ def display_message(status, job, socketio, fname=None):
     - fname: string, path to output tracks video
     '''
     status_dict = {
-                'status': status,
-                'id': str(job.id)
-                  }
+        'status': status,
+        'id': str(job.id)
+    }
     
     if fname is not None:
         status_dict['fname'] = fname
