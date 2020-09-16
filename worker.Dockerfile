@@ -17,8 +17,9 @@ RUN pip3 install --upgrade pip
 RUN apt-get update
 RUN apt-get install git -y
 
-# Have to install numpy before upgrading cython, which is why these are not 
-# in the worker.requirements.txt file
+# cython depends on numpy, and cython-bbox in worker.requirements.txt depends on 
+# cython, and since pip install does not follow the line order in installation,
+# have to install numpy and cython before the requirements file 
 RUN pip3 install numpy==1.19.1
 RUN pip3 install --upgrade cython
 RUN pip3 install -r worker.requirements.txt &&  python3 -m pip install 'git+https://github.com/facebookresearch/detectron2.git'
