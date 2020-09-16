@@ -81,11 +81,9 @@ def refresh_job(job_dict):
     logger.info('Refresh job, id={}'.format(job_dict['id']))
     job = q.fetch_job(job_dict['id'])
     filename = job_dict['filename']
-    try:
+    if job is not None: 
         job.refresh()
         logger.info('Job refreshed successfully')
-    except Exception as e:
-        logger.info('Job did not refresh properly, exception {}'.format(e))
     return filename
 
 @app.template_filter('display_job')
