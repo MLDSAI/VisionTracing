@@ -11,6 +11,7 @@ services:
       - ./:/app
     ports:
       - "5000:5000"
+  # On a machine without a GPU, comment out lines 16-18
   worker:
     device_requests:
       - capabilities:
