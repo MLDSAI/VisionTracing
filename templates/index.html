@@ -14,8 +14,8 @@
 
   <script>
     // temporary until Heroku bug gets sorted out
-    if (window.location.href.includes('heroku')) {
-      window.location.replace('http://ec2-3-237-25-198.compute-1.amazonaws.com:5000/');
+    if (window.location.href.includes('heroku')) {	
+      window.location.replace({{ URL|tojson }});
     }
   </script>
 
@@ -181,7 +181,7 @@
       {% endif %}
     {% endfor %}
 
-    var socket = io.connect('http://ec2-3-237-25-198.compute-1.amazonaws.com:5000/');
+    var socket = io.connect({{ URL|tojson }});
     
     /* If socket connection established correctly, logs connected */
     socket.on('connect', function() {
