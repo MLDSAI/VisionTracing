@@ -198,7 +198,7 @@ def _get_video_from_tracks(tracks, images, output_file):
         frame.save(image_file) 
     
     
-    clip = moviepy.video.io.ImageSequenceClip.ImageSequenceClip(image_files, fps=15)
+    clip = moviepy.video.io.ImageSequenceClip.ImageSequenceClip(image_files, fps=30)
    
     if not os.path.exists('static/videos'):
         os.mkdir('static/videos')
