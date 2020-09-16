@@ -70,8 +70,8 @@ def empty_session(session):
 
     return False
 
-@app.template_filter('refresh_job')
-def refresh_job(job_dict):
+@app.template_filter('get_filename')
+def get_filename(job_dict):
     '''
     This function updates the meta dictionary of a given job and returns the
     job's filename

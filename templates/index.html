@@ -117,7 +117,7 @@
         {% for job_dict in session['jobs'] %}
 	<ul style="list-style-type:none;">
               <li>
-              {{ job_dict | refresh_job }}
+              {{ job_dict | get_filename }}
               </li>
 	      <li id="{{ job_dict['id'] }}">
               {{ job_dict | display_job }}
