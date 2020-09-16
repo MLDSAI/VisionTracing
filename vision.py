@@ -219,6 +219,6 @@ def _get_video_from_tracks(tracks, images, fps, output_file):
    
     try:
         shutil.rmtree(image_folder)
-    except Exception as e:
+    except OSError as e:
         logger.info('Error in deleting image folder: {}'.format(e))
     return output_file
