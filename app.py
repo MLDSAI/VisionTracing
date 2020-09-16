@@ -108,9 +108,9 @@ def display_job(job_dict):
         return job.meta.get('status')
     return 'Beginning process...'
 
-@app.route('/<path:path>')
+@app.route('/static/<path:path>')
 def send_static(path):
-    return send_from_directory('', path)
+    return send_from_directory('static', path)
 
 @app.route('/upload', methods=['POST'])
 def upload():
