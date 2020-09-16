@@ -83,6 +83,8 @@ def get_tracking_video(fpath_video, output_file):
 
 def _get_images_from_video(fpath_video):
     '''
+    This function returns an image generator that produces each frame a video (given
+    a video source) as well as the frames per second of that video
     Parameters:
     - str fpath_video: path to video file
     '''
@@ -164,7 +166,15 @@ def _setup_cfg(config, opts, conf_thresh):
 
 
 def _get_video_from_tracks(tracks, images, fps, output_file):
-    ''' Save a video showing tracks to disk and return the path '''
+    ''' 
+    Save a video showing tracks to disk and return the path
+    Parameters:
+    - tracks: List containing numpy arrays where each element is a numpy array containing the 
+    bounding boxes for a given track
+    - images: list of frames from a video
+    - fps: integer, frames per second of output video
+    - output_file: path to the location of the video that this function outputs
+    '''
     output_size = images[0].shape
     
     # Source: https://colab.research.google.com/drive/1CLRrAhhzo-mzPyVtF8tUszcXZ8gx5coI
